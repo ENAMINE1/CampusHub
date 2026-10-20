@@ -1,5 +1,5 @@
 // The one place the React app talks to the API. Every request goes through apiFetch, so headers,
-// cookies and error handling are written once.
+// cookies, the access token and error handling are written once.
 // In development VITE_API_URL is unset and '/api/v1' goes through the Vite proxy (vite.config.js).
 const BASE_URL = import.meta.env.VITE_API_URL ?? '/api/v1';
 
@@ -13,14 +13,32 @@ export class ApiError extends Error {
   }
 }
 
-export async function apiFetch(path, { body, ...options } = {}) {
-  let res;
+// The access token lives only in this variable (memory), never in localStorage, where any
+// script injected into the page could read it. A reload loses it; AuthContext gets a new one
+// from the httpOnly refresh cookie.
+let accessToken = null;
+let onSessionExpired = () => {};
+
+export function setAccessToken(token) {
+  accessToken = token;
+}
+
+// AuthContext registers what to do when the session cannot be renewed (forget the user).
+export function setSessionExpiredHandler(handler) {
+  onSessionExpired = handler;
+}
+
+async function send(path, { body, headers, ...options }) {
   try {
-    res = await fetch(`${BASE_URL}${path}`, {
+    return await fetch(`${BASE_URL}${path}`, {
       ...options,
-      headers: body ? { 'Content-Type': 'application/json' } : {},
+      headers: {
+        ...(body && { 'Content-Type': 'application/json' }),
+        ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+        ...headers,
+      },
       body: body ? JSON.stringify(body) : undefined,
-      credentials: 'include', // send cookies (needed for login in a later video)
+      credentials: 'include', // send the refresh cookie to /auth routes
     });
   } catch (err) {
     if (err.name === 'AbortError') throw err;
@@ -31,22 +49,57 @@ export async function apiFetch(path, { body, ...options } = {}) {
       'Cannot reach the server. Is the API running?',
     );
   }
+}
 
+async function readResponse(res) {
   if (res.status === 204) return null;
   const data = await res.json().catch(() => null);
-  if (!res.ok) {
-    const error = data?.error ?? {};
-    // 502-504 with no JSON body usually means a proxy could not reach Express at all.
-    const fallback =
-      res.status >= 502 && res.status <= 504
-        ? 'Cannot reach the server. Is the API running?'
-        : `Request failed (HTTP ${res.status}).`;
-    throw new ApiError(
-      res.status,
-      error.code ?? 'HTTP_ERROR',
-      error.message ?? fallback,
-      error.details ?? [],
-    );
+  if (res.ok) return data;
+
+  const error = data?.error ?? {};
+  // 502-504 with no JSON body usually means a proxy could not reach Express at all.
+  const fallback =
+    res.status >= 502 && res.status <= 504
+      ? 'Cannot reach the server. Is the API running?'
+      : `Request failed (HTTP ${res.status}).`;
+  throw new ApiError(
+    res.status,
+    error.code ?? 'HTTP_ERROR',
+    error.message ?? fallback,
+    error.details ?? [],
+  );
+}
+
+// Several requests can expire at the same moment; they all wait for ONE refresh call,
+// because each refresh rotates the cookie and a second one would use an already-spent token.
+let refreshing = null;
+
+export function refreshSession() {
+  refreshing ??= send('/auth/refresh', { method: 'POST' })
+    .then(readResponse)
+    .then((session) => {
+      setAccessToken(session.accessToken);
+      return session;
+    })
+    .finally(() => {
+      refreshing = null;
+    });
+  return refreshing;
+}
+
+export async function apiFetch(path, options = {}) {
+  const res = await send(path, options);
+
+  // An expired access token is normal: renew it with the refresh cookie and retry once.
+  if (res.status === 401 && accessToken && !path.startsWith('/auth/')) {
+    try {
+      await refreshSession();
+    } catch {
+      setAccessToken(null);
+      onSessionExpired();
+      return readResponse(res);
+    }
+    return readResponse(await send(path, options));
   }
-  return data;
+  return readResponse(res);
 }

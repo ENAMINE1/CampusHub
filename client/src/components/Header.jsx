@@ -27,16 +27,17 @@ export default function Header() {
                 Clubs
               </NavLink>
             </li>
-            {user ? (
+            {user?.role === 'student' && (
               <li>
                 <NavLink to="/me/registrations" className={linkClass}>
                   My registrations
                 </NavLink>
               </li>
-            ) : (
+            )}
+            {!user && (
               <li>
-                <NavLink to="/register" className={linkClass}>
-                  Register
+                <NavLink to="/login" className={linkClass}>
+                  Log in
                 </NavLink>
               </li>
             )}

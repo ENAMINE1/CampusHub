@@ -1,4 +1,5 @@
-// Controlled sign-up form: one state object for all fields, validated on blur and on submit.
+// Controlled sign-up form: one state object for all fields, validated on blur and on submit,
+// then sent to the API. Server errors (like a taken email) are shown above the button.
 import { useState } from 'react';
 import Input from './ui/Input.jsx';
 import Button from './ui/Button.jsx';
@@ -10,7 +11,9 @@ const emptyForm = { name: '', email: '', password: '' };
 export default function RegistrationForm() {
   const [values, setValues] = useState(emptyForm);
   const [touched, setTouched] = useState({});
-  const { user, login } = useAuth();
+  const [serverError, setServerError] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const { register } = useAuth();
 
   // Errors are derived from the values, so they can never disagree with what is typed.
   const errors = validateRegistration(values);
@@ -23,14 +26,19 @@ export default function RegistrationForm() {
     setTouched({ ...touched, [e.target.name]: true });
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     setTouched({ name: true, email: true, password: true });
     if (Object.keys(errors).length > 0) return;
-    // No server yet: signing in just stores the user in AuthContext.
-    login({ name: values.name.trim(), email: values.email.trim() });
-    setValues(emptyForm);
-    setTouched({});
+    setIsSaving(true);
+    setServerError('');
+    try {
+      // On success AuthContext now has a user, and the page moves on.
+      await register(values.name.trim(), values.email.trim(), values.password);
+    } catch (err) {
+      setServerError(err.message);
+      setIsSaving(false);
+    }
   }
 
   // Only show an error once the user has left that field (or tried to submit).
@@ -70,12 +78,14 @@ export default function RegistrationForm() {
         onBlur={handleBlur}
         error={visibleError('password')}
       />
-      <Button type="submit">Create account</Button>
-      {user && (
-        <p role="status" className="text-green-800 dark:text-green-300">
-          Welcome, {user.name}! You are signed in.
+      {serverError && (
+        <p role="alert" className="text-red-700 dark:text-red-300">
+          {serverError}
         </p>
       )}
+      <Button type="submit" disabled={isSaving}>
+        {isSaving ? 'Creating account…' : 'Create account'}
+      </Button>
     </form>
   );
 }
