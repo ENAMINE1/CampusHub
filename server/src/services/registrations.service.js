@@ -3,6 +3,7 @@ import Event from '../models/Event.js';
 import Registration from '../models/Registration.js';
 import ApiError from '../utils/ApiError.js';
 import { findEventRecord, toEvent } from './events.service.js';
+import { emitSeats } from '../sockets/seats.js';
 
 const DUPLICATE_KEY = 11000;
 
@@ -57,6 +58,8 @@ export async function registerForEvent(eventId, user) {
   );
   if (!event) await explainNoSeat(eventId, user);
 
+  emitSeats(eventId, event.capacity - event.seatsTaken);
+
   try {
     return toRegistration(await Registration.create({ event: eventId, user: user._id }));
   } catch (err) {
@@ -71,6 +74,7 @@ export async function registerForEvent(eventId, user) {
     if (flipped) return toRegistration(flipped);
     // Already registered: give the seat back.
     await Event.updateOne({ _id: eventId }, { $inc: { seatsTaken: -1 } });
+    emitSeats(eventId, event.capacity - event.seatsTaken + 1);
     throw new ApiError(
       409,
       'ALREADY_REGISTERED',
@@ -91,10 +95,12 @@ export async function cancelRegistration(eventId, user) {
   );
   if (!cancelled) throw ApiError.notFound('You are not registered for this event.');
   // The seatsTaken > 0 guard stops the counter from ever going negative.
-  await Event.updateOne(
+  const updated = await Event.findOneAndUpdate(
     { _id: eventId, seatsTaken: { $gt: 0 } },
     { $inc: { seatsTaken: -1 } },
+    { returnDocument: 'after' },
   );
+  if (updated) emitSeats(eventId, updated.capacity - updated.seatsTaken);
 }
 
 export async function listRegistrants(eventId) {

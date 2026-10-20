@@ -6,6 +6,8 @@ import ErrorState from '../components/ui/ErrorState.jsx';
 import Card from '../components/ui/Card.jsx';
 import Badge from '../components/ui/Badge.jsx';
 import RegisterForEvent from '../components/RegisterForEvent.jsx';
+import SeatsBadge from '../components/SeatsBadge.jsx';
+import useSocketSeats from '../hooks/useSocketSeats.js';
 import FavoriteButton from '../components/FavoriteButton.jsx';
 import formatDate from '../utils/formatDate.js';
 import { assetUrl } from '../api/client.js';
@@ -16,11 +18,11 @@ export default function EventDetailsPage() {
   // Only trust data that belongs to this id: right after navigating, data may still hold the
   // previous event. While reloading the same event (after registering) we keep showing it.
   const event = data?.id === id ? data : null;
+  // Hooks run on every render, before any early return below.
+  const live = useSocketSeats(id, event?.seatsLeft);
 
   if (error) return <ErrorState message={error} />;
   if (!event) return <Spinner label="Loading event…" />;
-
-  const { seatsLeft } = event;
 
   return (
     <Card className="p-8">
@@ -68,12 +70,15 @@ export default function EventDetailsPage() {
           <dd>{formatDate(event.registrationDeadline)}</dd>
         </div>
       </dl>
-      <p className="mt-6 mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">
-        {seatsLeft > 0
-          ? `${seatsLeft} of ${event.capacity} seats left`
-          : 'This event is full'}
-      </p>
-      <RegisterForEvent event={event} onChange={reload} />
+      <SeatsBadge
+        seatsLeft={live.seatsLeft}
+        capacity={event.capacity}
+        isLive={live.isConnected}
+      />
+      <RegisterForEvent
+        event={{ ...event, seatsLeft: live.seatsLeft }}
+        onChange={reload}
+      />
     </Card>
   );
 }

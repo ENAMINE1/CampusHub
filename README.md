@@ -179,6 +179,7 @@ API tests (Vitest + Supertest) live in `server/tests` and run with `npm test`.
 | 62    | `v62-pagination`           | SPEC indexes (checked with `explain()`); paged, sorted, text-searched `GET /events`; `Pagination` and sort in React                                                      |
 | 63    | `v63-auth-fullstack`       | React login/register pages, real `AuthContext` with silent refresh, `ProtectedRoute`, logout, refresh-and-retry in `api/client.js`; registrations loaded from the server |
 | 64    | `v64-crud-roles`           | Atomic register and cancel, club-admin dashboard (create/edit/delete events, registrant list), role-based nav, server favorites with guest merge                         |
+| 65    | `v65-uploads-realtime`     | Poster upload (multer, 2 MB, MIME + extension, storage adapter); Socket.IO room per event with a live seats badge and fetch fallback                                     |
 
 ## Stack (exact installed versions)
 
@@ -214,3 +215,4 @@ API tests (Vitest + Supertest) live in `server/tests` and run with `npm test`.
 | mongoose                         | 9.11.2  |
 | mongodb-memory-server            | 11.3.0  |
 | multer                           | 2.4.0   |
+| socket.io, socket.io-client      | 4.8.4   |

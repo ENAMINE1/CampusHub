@@ -1,7 +1,9 @@
-// Starts the API: connect to MongoDB first, then accept HTTP requests.
+// Starts the API: connect to MongoDB, then serve HTTP and WebSocket (Socket.IO) on one port.
+import http from 'node:http';
 import config from './config/index.js';
 import app from './app.js';
 import { connectDB } from './db/connect.js';
+import { attachSockets } from './sockets/seats.js';
 
 try {
   const where = await connectDB(config.mongoUri);
@@ -14,6 +16,10 @@ try {
   process.exit(1);
 }
 
-app.listen(config.port, () => {
+// Socket.IO needs the raw HTTP server, so create it ourselves instead of calling app.listen().
+const httpServer = http.createServer(app);
+attachSockets(httpServer, config.clientUrl);
+
+httpServer.listen(config.port, () => {
   console.log(`CampusHub API listening on http://localhost:${config.port}`);
 });

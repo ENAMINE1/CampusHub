@@ -12,6 +12,7 @@ export default defineConfig({
     proxy: {
       '/api': 'http://localhost:3000',
       '/uploads': 'http://localhost:3000', // poster images
+      '/socket.io': { target: 'http://localhost:3000', ws: true }, // live seats (WebSocket)
     },
   },
   test: {
