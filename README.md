@@ -131,6 +131,7 @@ API tests (Vitest + Supertest) live in `server/tests` and run with `npm test`.
 | 55    | `v55-api-tests`     | Supertest suites for events and registrations; root `npm test` runs both workspaces; README API section                                         |
 | 56    | `v56-auth`          | bcrypt (cost 12) sign-up/login with in-memory users; 15-min access token; 7-day httpOnly refresh cookie, hashed and rotated; refresh and logout |
 | 57    | `v57-rbac`          | `requireAuth`, `requireRole`, `requireEventOwner`; owner-only event changes and registrant list; login rate limit; 401 vs 403 tests             |
+| 58    | `v58-mongodb`       | `docs/mongosh-cheatsheet.md` (insert/find/update/delete, indexes); `MONGODB_URI` in `.env.example`                                              |
 
 ## Stack (exact installed versions)
 
