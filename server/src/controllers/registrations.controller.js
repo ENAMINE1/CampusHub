@@ -4,7 +4,7 @@ import * as registrationsService from '../services/registrations.service.js';
 export async function create(req, res) {
   const registration = await registrationsService.registerForEvent(
     req.validated.params.id,
-    req.validated.body,
+    req.user, // who is registering comes from the access token, not the request body
   );
   res.status(201).json(registration);
 }

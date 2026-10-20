@@ -1,5 +1,6 @@
 // Events business logic, stored in MongoDB through the Event model.
 import Event from '../models/Event.js';
+import Registration from '../models/Registration.js';
 import ApiError from '../utils/ApiError.js';
 import { clubExists } from './clubs.service.js';
 import { findDateProblems } from '../validators/event.schemas.js';
@@ -92,4 +93,6 @@ export async function updateEvent(id, changes) {
 export async function deleteEvent(id) {
   const deleted = await Event.findByIdAndDelete(id);
   if (!deleted) throw ApiError.notFound('Event not found.');
+  // FR-2.4: registrations for a deleted event would point at nothing, so remove them too.
+  await Registration.deleteMany({ event: id });
 }

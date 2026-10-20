@@ -1,22 +1,30 @@
-// Registration rules (SPEC.md FR-3.1), kept in memory for now.
-// Video 64 replaces the seat counting with an atomic MongoDB update that is safe under load.
-import { randomUUID } from 'node:crypto';
+// Registration rules (SPEC.md FR-3.1), stored in MongoDB through the Registration model.
+import Registration from '../models/Registration.js';
 import ApiError from '../utils/ApiError.js';
 import { findEventRecord } from './events.service.js';
 
-const registrations = [];
+function toRegistration(doc) {
+  return {
+    id: doc._id.toString(),
+    eventId: doc.event.toString(),
+    userId: doc.user.toString(),
+    status: doc.status,
+    createdAt: doc.createdAt,
+  };
+}
 
-export async function registerForEvent(eventId, { name, email }) {
+export async function registerForEvent(eventId, user) {
   const event = await findEventRecord(eventId); // throws 404 if missing
 
-  if (new Date() > new Date(event.registrationDeadline)) {
+  if (new Date() > event.registrationDeadline) {
     throw new ApiError(
       422,
       'REGISTRATION_CLOSED',
       'Registration for this event has closed.',
     );
   }
-  if (registrations.some((r) => r.eventId === eventId && r.email === email)) {
+  const existing = await Registration.findOne({ event: event._id, user: user._id });
+  if (existing?.status === 'registered') {
     throw new ApiError(
       409,
       'ALREADY_REGISTERED',
@@ -31,12 +39,26 @@ export async function registerForEvent(eventId, { name, email }) {
   // Video 64 fixes this race with one atomic update.
   event.seatsTaken += 1;
   await event.save();
-  const registration = { id: randomUUID(), eventId, name, email, status: 'registered' };
-  registrations.push(registration);
-  return registration;
+
+  // Registering again after cancelling flips the old document back instead of adding a second one.
+  if (existing) {
+    existing.status = 'registered';
+    await existing.save();
+    return toRegistration(existing);
+  }
+  return toRegistration(await Registration.create({ event: event._id, user: user._id }));
 }
 
 export async function listRegistrants(eventId) {
   await findEventRecord(eventId);
-  return registrations.filter((r) => r.eventId === eventId);
+  const registrations = await Registration.find({ event: eventId, status: 'registered' })
+    .sort({ createdAt: 1 })
+    .populate('user', 'name email')
+    .lean();
+  return registrations.map((r) => ({
+    id: r._id.toString(),
+    name: r.user.name,
+    email: r.user.email,
+    registeredAt: r.createdAt,
+  }));
 }

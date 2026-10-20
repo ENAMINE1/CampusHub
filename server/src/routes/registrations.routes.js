@@ -7,7 +7,6 @@ import requireAuth from '../middleware/requireAuth.js';
 import requireRole from '../middleware/requireRole.js';
 import requireEventOwner from '../middleware/requireEventOwner.js';
 import { eventIdParams } from '../validators/event.schemas.js';
-import { registrationBody } from '../validators/registration.schemas.js';
 
 const router = Router({ mergeParams: true });
 
@@ -20,9 +19,12 @@ router.get(
   requireEventOwner,
   registrationsController.list,
 );
+// Students register themselves; who they are comes from their access token.
 router.post(
   '/',
-  validate({ params: eventIdParams, body: registrationBody }),
+  requireAuth,
+  requireRole('student'),
+  validate({ params: eventIdParams }),
   registrationsController.create,
 );
 

@@ -6,6 +6,7 @@ import config from '../src/config/index.js';
 import { connectDB, disconnectDB } from '../src/db/connect.js';
 import Club from '../src/models/Club.js';
 import Event from '../src/models/Event.js';
+import Registration from '../src/models/Registration.js';
 import User from '../src/models/User.js';
 import { createUser } from '../src/services/user.service.js';
 
@@ -22,7 +23,12 @@ const readJson = async (file) =>
   JSON.parse(await readFile(path.join(dataDir, file), 'utf8'));
 
 await connectDB(config.mongoUri);
-await Promise.all([Event.deleteMany({}), Club.deleteMany({}), User.deleteMany({})]);
+await Promise.all([
+  Event.deleteMany({}),
+  Club.deleteMany({}),
+  User.deleteMany({}),
+  Registration.deleteMany({}),
+]);
 
 const users = {};
 for (const demo of await readJson('demo-users.json')) {
