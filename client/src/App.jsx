@@ -5,40 +5,18 @@ import Footer from './components/Footer.jsx';
 import EventFilters from './components/EventFilters.jsx';
 import EventList from './components/EventList.jsx';
 import RegistrationForm from './components/RegistrationForm.jsx';
+import useFetch from './hooks/useFetch.js';
+import useDebounce from './hooks/useDebounce.js';
+import useLocalStorage from './hooks/useLocalStorage.js';
 
 export default function App() {
-  const [events, setEvents] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
+  const { data, isLoading, error } = useFetch('/data/events.json');
   const [search, setSearch] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const debouncedSearch = useDebounce(search, 300);
   const [category, setCategory] = useState('');
-  const [favorites, setFavorites] = useState([]);
+  const [favorites, setFavorites] = useLocalStorage('campushub:favorites', []);
 
-  // Load the events once, when the component first appears.
-  useEffect(() => {
-    const controller = new AbortController();
-    fetch('/data/events.json', { signal: controller.signal })
-      .then((res) => {
-        // Classic mistake: fetch only rejects on network failure. A 404 still "succeeds" unless you check res.ok.
-        if (!res.ok) throw new Error(`Could not load events (HTTP ${res.status}).`);
-        return res.json();
-      })
-      .then((data) => setEvents(data))
-      .catch((err) => {
-        if (err.name !== 'AbortError') setError(err.message);
-      })
-      .finally(() => setIsLoading(false));
-    // Cleanup: cancel the request if the component goes away before it finishes.
-    return () => controller.abort();
-  }, []);
-
-  // Wait until typing pauses for 300 ms before filtering. The cleanup cancels the previous timer.
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedSearch(search), 300);
-    return () => clearTimeout(timer);
-  }, [search]);
-
+  const events = data ?? [];
   const query = debouncedSearch.trim().toLowerCase();
   const visibleEvents = events.filter(
     (event) =>
