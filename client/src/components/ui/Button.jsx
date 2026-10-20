@@ -1,7 +1,8 @@
 // Button with a few visual variants. Any other prop (onClick, disabled, type) passes straight through.
 const variants = {
   primary: 'bg-brand-700 text-white hover:bg-brand-600',
-  secondary: 'border border-slate-300 bg-white text-slate-800 hover:bg-slate-100',
+  secondary:
+    'border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700',
   danger: 'bg-red-700 text-white hover:bg-red-600',
 };
 

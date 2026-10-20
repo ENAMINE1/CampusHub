@@ -18,12 +18,15 @@ export default function Modal({ open, title, onClose, children }) {
       ref={dialogRef}
       onClose={onClose}
       aria-labelledby="modal-title"
-      className="m-auto w-full max-w-md rounded-xl bg-white p-6 shadow-xl backdrop:bg-slate-900/60"
+      className="m-auto w-full max-w-md rounded-xl bg-white dark:bg-slate-800 p-6 shadow-xl backdrop:bg-slate-900/60"
     >
-      <h2 id="modal-title" className="text-xl font-bold text-slate-900">
+      <h2
+        id="modal-title"
+        className="text-xl font-bold text-slate-900 dark:text-slate-100"
+      >
         {title}
       </h2>
-      <div className="mt-3 text-slate-700">{children}</div>
+      <div className="mt-3 text-slate-700 dark:text-slate-300">{children}</div>
     </dialog>
   );
 }

@@ -45,7 +45,9 @@ export default function EventsPage() {
 
   return (
     <>
-      <h1 className="mb-6 text-3xl font-bold text-slate-900">Events</h1>
+      <h1 className="mb-6 text-3xl font-bold text-slate-900 dark:text-slate-100">
+        Events
+      </h1>
       <EventFilters
         search={search}
         category={category}

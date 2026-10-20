@@ -6,7 +6,7 @@ export default function FavoriteButton({ isFavorite, onToggle, title }) {
       onClick={onToggle}
       aria-pressed={isFavorite}
       aria-label={`Favorite ${title}`}
-      className="rounded-full p-1 text-xl leading-none text-rose-600 hover:bg-rose-50"
+      className="rounded-full p-1 text-xl leading-none text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950"
     >
       {isFavorite ? '♥' : '♡'}
     </button>

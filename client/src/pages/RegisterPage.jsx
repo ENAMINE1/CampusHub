@@ -4,7 +4,9 @@ import RegistrationForm from '../components/RegistrationForm.jsx';
 export default function RegisterPage() {
   return (
     <>
-      <h1 className="mb-6 text-3xl font-bold text-slate-900">Join CampusHub</h1>
+      <h1 className="mb-6 text-3xl font-bold text-slate-900 dark:text-slate-100">
+        Join CampusHub
+      </h1>
       <RegistrationForm />
     </>
   );

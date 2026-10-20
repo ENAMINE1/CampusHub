@@ -5,7 +5,7 @@ import Footer from '../components/Footer.jsx';
 
 export default function Layout() {
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
+    <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
       <Header />
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
         <Outlet />

@@ -70,7 +70,7 @@ export default function RegistrationForm() {
       />
       <Button type="submit">Create account</Button>
       {submittedName && (
-        <p role="status" className="text-green-800">
+        <p role="status" className="text-green-800 dark:text-green-300">
           Thanks, {submittedName}! Your account form is valid.
         </p>
       )}

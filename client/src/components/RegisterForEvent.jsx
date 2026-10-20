@@ -15,7 +15,7 @@ export default function RegisterForEvent({ event }) {
 
   if (isRegistered) {
     return (
-      <p role="status" className="font-semibold text-green-800">
+      <p role="status" className="font-semibold text-green-800 dark:text-green-300">
         You are registered for {event.title}.
       </p>
     );

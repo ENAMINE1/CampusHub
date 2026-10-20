@@ -1,5 +1,6 @@
 // Site header: logo link and the main navigation. NavLink highlights the page you are on.
 import { Link, NavLink } from 'react-router';
+import ThemeToggle from './ThemeToggle.jsx';
 
 const linkClass = ({ isActive }) =>
   `rounded px-2 py-1 hover:underline ${isActive ? 'bg-white/20 underline' : ''}`;
@@ -30,6 +31,7 @@ export default function Header() {
             </li>
           </ul>
         </nav>
+        <ThemeToggle />
       </div>
     </header>
   );

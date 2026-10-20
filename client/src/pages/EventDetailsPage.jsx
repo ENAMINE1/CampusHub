@@ -19,10 +19,12 @@ export default function EventDetailsPage() {
   if (!event) {
     return (
       <div className="py-16 text-center">
-        <h1 className="text-2xl font-bold text-slate-900">Event not found</h1>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+          Event not found
+        </h1>
         <Link
           to="/events"
-          className="mt-4 inline-block font-semibold text-brand-700 underline"
+          className="mt-4 inline-block font-semibold text-brand-700 dark:text-brand-300 underline"
         >
           Back to all events
         </Link>
@@ -34,16 +36,23 @@ export default function EventDetailsPage() {
 
   return (
     <Card className="p-8">
-      <Link to="/events" className="text-sm font-semibold text-brand-700 underline">
+      <Link
+        to="/events"
+        className="text-sm font-semibold text-brand-700 dark:text-brand-300 underline"
+      >
         ← All events
       </Link>
       <div className="mt-4 flex items-center gap-2">
         <Badge>{event.category}</Badge>
-        <span className="text-sm text-slate-600">{event.club.name}</span>
+        <span className="text-sm text-slate-600 dark:text-slate-400">
+          {event.club.name}
+        </span>
       </div>
-      <h1 className="mt-2 text-3xl font-bold text-slate-900">{event.title}</h1>
-      <p className="mt-4 text-slate-700">{event.description}</p>
-      <dl className="mt-6 grid gap-3 text-slate-800 sm:grid-cols-2">
+      <h1 className="mt-2 text-3xl font-bold text-slate-900 dark:text-slate-100">
+        {event.title}
+      </h1>
+      <p className="mt-4 text-slate-700 dark:text-slate-300">{event.description}</p>
+      <dl className="mt-6 grid gap-3 text-slate-800 dark:text-slate-200 sm:grid-cols-2">
         <div>
           <dt className="font-semibold">Starts</dt>
           <dd>{formatDate(event.startsAt)}</dd>
@@ -61,7 +70,7 @@ export default function EventDetailsPage() {
           <dd>{formatDate(event.registrationDeadline)}</dd>
         </div>
       </dl>
-      <p className="mt-6 mb-4 text-lg font-semibold text-slate-900">
+      <p className="mt-6 mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">
         {seatsLeft > 0
           ? `${seatsLeft} of ${event.capacity} seats left`
           : 'This event is full'}

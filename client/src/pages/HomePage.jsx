@@ -23,9 +23,11 @@ export default function HomePage() {
 
   return (
     <>
-      <section className="mb-10 rounded-2xl bg-brand-50 p-8">
-        <h1 className="text-3xl font-bold text-slate-900">What's happening on campus</h1>
-        <p className="mt-2 text-slate-700">
+      <section className="mb-10 rounded-2xl bg-brand-50 dark:bg-slate-800 p-8">
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+          What's happening on campus
+        </h1>
+        <p className="mt-2 text-slate-700 dark:text-slate-300">
           Find events, join clubs and never miss a thing.
         </p>
         <Link
@@ -35,7 +37,9 @@ export default function HomePage() {
           Browse all events
         </Link>
       </section>
-      <h2 className="mb-4 text-2xl font-bold text-slate-900">Coming up next</h2>
+      <h2 className="mb-4 text-2xl font-bold text-slate-900 dark:text-slate-100">
+        Coming up next
+      </h2>
       {isLoading && <Spinner label="Loading events…" />}
       {error && <ErrorState message={error} />}
       {data && (

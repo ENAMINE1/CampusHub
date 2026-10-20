@@ -26,5 +26,11 @@ export default defineConfig(
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
   },
+  {
+    // A context file exports its Provider and its hook together on purpose; Fast Refresh
+    // simply reloads the page when one of these files changes.
+    files: ['client/src/context/*.jsx'],
+    rules: { 'react-refresh/only-export-components': 'off' },
+  },
   prettier,
 );
