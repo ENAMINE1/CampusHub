@@ -36,13 +36,13 @@ with a single `package-lock.json`.
 
 All commands run from the repo root.
 
-| Command                              | What it does                                                                  |
-| ------------------------------------ | ----------------------------------------------------------------------------- |
-| `npm run dev`                        | Vite dev server at http://localhost:5173 with instant reload                  |
-| `npm test`                           | Every workspace's tests (Vitest + React Testing Library in `client/src/test`) |
-| `npm run lint`                       | ESLint over the whole repo                                                    |
-| `npm run build`                      | Production build into `client/dist`                                           |
-| `npm run preview --workspace client` | Serves `client/dist` at http://localhost:4173 to check the build              |
+| Command                              | What it does                                                                                            |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| `npm run dev`                        | Starts both apps: Vite at http://localhost:5173 and the API at http://localhost:3000 (restarts on save) |
+| `npm test`                           | Every workspace's tests (Vitest + React Testing Library in `client/src/test`)                           |
+| `npm run lint`                       | ESLint over the whole repo                                                                              |
+| `npm run build`                      | Production build into `client/dist`                                                                     |
+| `npm run preview --workspace client` | Serves `client/dist` at http://localhost:4173 to check the build                                        |
 
 ### Deploying the client
 
@@ -72,6 +72,7 @@ output directory is `dist`.
 | 45    | `v45-campushub-v2` | `build`/`preview` scripts, Vercel SPA rewrite, README run section (CampusHub v2: the React app)                                        |
 | 46    | `v46-node-npm`     | `server/` package with a first Node script; npm workspaces with one root lockfile                                                      |
 | 47    | `v47-core-modules` | `server/scripts/report.js` reads `events.json` with `fs/promises` and `path`, writes a summary report                                  |
+| 48    | `v48-express`      | Express app: `GET /api/health`, `GET /api/events`; `app.js` / `server.js` split; `node --watch`; one `npm run dev` for both            |
 
 ## Stack (exact installed versions)
 
@@ -92,3 +93,5 @@ output directory is `dist`.
 | @testing-library/user-event      | 14.6.8  |
 | @testing-library/jest-dom        | 7.0.1   |
 | jsdom                            | 30.1.3  |
+| express                          | 5.3.0   |
+| concurrently                     | 10.0.6  |
