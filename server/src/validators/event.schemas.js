@@ -52,7 +52,10 @@ export const createEventSchema = eventFields.superRefine((event, ctx) => {
 });
 export const updateEventSchema = eventFields.partial();
 
-export const eventIdParams = z.strictObject({ id: z.string().min(1).max(64) });
+// MongoDB ids are 24 hexadecimal characters.
+export const eventIdParams = z.strictObject({
+  id: z.string().regex(/^[a-f\d]{24}$/i, 'Not a valid id.'),
+});
 
 export const listEventsQuery = z.strictObject({
   category: z.enum(CATEGORIES).optional(),

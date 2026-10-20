@@ -6,9 +6,20 @@ import { authHeaderFor, validEventBody } from './helpers.js';
 
 const api = request(app);
 let admin; // Authorization header of an admin, created once for this file
+let gitWorkshopId;
 
+// Each test file starts with an empty database, so create the events these tests read.
 beforeAll(async () => {
   admin = await authHeaderFor('admin');
+  const git = await api
+    .post('/api/v1/events')
+    .set('Authorization', admin)
+    .send(validEventBody({ title: 'Intro to Git Workshop', category: 'workshop' }));
+  gitWorkshopId = git.body.id;
+  await api
+    .post('/api/v1/events')
+    .set('Authorization', admin)
+    .send(validEventBody({ title: 'Hack Night', category: 'tech' }));
 });
 
 describe('GET /api/v1/health', () => {
@@ -49,17 +60,22 @@ describe('GET /api/v1/events', () => {
 
 describe('GET /api/v1/events/:id', () => {
   it('returns one event', async () => {
-    const res = await api.get('/api/v1/events/evt-101');
+    const res = await api.get(`/api/v1/events/${gitWorkshopId}`);
     expect(res.status).toBe(200);
     expect(res.body.title).toBe('Intro to Git Workshop');
   });
 
-  it('returns 404 in the standard error shape', async () => {
-    const res = await api.get('/api/v1/events/nope');
+  it('returns 404 in the standard error shape for an id that does not exist', async () => {
+    const res = await api.get('/api/v1/events/000000000000000000000000');
     expect(res.status).toBe(404);
     expect(res.body).toEqual({
       error: { code: 'NOT_FOUND', message: 'Event not found.', details: [] },
     });
+  });
+
+  it('returns 422 for something that is not an id at all', async () => {
+    const res = await api.get('/api/v1/events/nope');
+    expect(res.status).toBe(422);
   });
 });
 

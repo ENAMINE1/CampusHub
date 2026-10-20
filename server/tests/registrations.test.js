@@ -42,7 +42,7 @@ describe('POST /api/v1/events/:id/registrations', () => {
 
   it('returns 404 for an event that does not exist', async () => {
     const res = await api
-      .post('/api/v1/events/nope/registrations')
+      .post('/api/v1/events/000000000000000000000000/registrations')
       .send({ name: 'Asha', email: 'asha@campus.edu' });
     expect(res.status).toBe(404);
   });

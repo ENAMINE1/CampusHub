@@ -6,8 +6,8 @@ import { findEventRecord } from './events.service.js';
 
 const registrations = [];
 
-export function registerForEvent(eventId, { name, email }) {
-  const event = findEventRecord(eventId); // throws 404 if missing
+export async function registerForEvent(eventId, { name, email }) {
+  const event = await findEventRecord(eventId); // throws 404 if missing
 
   if (new Date() > new Date(event.registrationDeadline)) {
     throw new ApiError(
@@ -27,13 +27,16 @@ export function registerForEvent(eventId, { name, email }) {
     throw new ApiError(422, 'EVENT_FULL', 'This event is full.');
   }
 
+  // Read, check, then write: two requests at the same moment could both pass the check above.
+  // Video 64 fixes this race with one atomic update.
   event.seatsTaken += 1;
+  await event.save();
   const registration = { id: randomUUID(), eventId, name, email, status: 'registered' };
   registrations.push(registration);
   return registration;
 }
 
-export function listRegistrants(eventId) {
-  findEventRecord(eventId);
+export async function listRegistrants(eventId) {
+  await findEventRecord(eventId);
   return registrations.filter((r) => r.eventId === eventId);
 }

@@ -22,15 +22,44 @@ any step and see exactly what that video added.
 - Node.js 24 LTS (`.nvmrc` says `24`; run `nvm use` if you use nvm)
 - npm 11 or newer
 - Git
+- A MongoDB database: a free MongoDB Atlas cluster, or MongoDB running locally (for example
+  with Docker: `docker run -d -p 27017:27017 --name campushub-mongo mongo:8`)
 
 ## Setup
 
 ```bash
 npm install
+cp server/.env.example server/.env
 ```
 
 The repo is an npm workspace: one `npm install` at the root installs `client/` and `server/`,
 with a single `package-lock.json`.
+
+Then edit `server/.env`:
+
+| Variable                                  | What it is                                                                   |
+| ----------------------------------------- | ---------------------------------------------------------------------------- |
+| `NODE_ENV`                                | `development` on your laptop, `production` on a server                       |
+| `PORT`                                    | Port the API listens on (3000)                                               |
+| `CLIENT_URL`                              | The React app's address; the only origin CORS allows (http://localhost:5173) |
+| `MONGODB_URI`                             | MongoDB connection string, including the database name `campushub`           |
+| `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET` | Two different random strings of 32+ characters that sign login tokens        |
+| `ACCESS_TOKEN_TTL`, `REFRESH_TOKEN_TTL`   | Token lifetimes (`15m` and `7d`)                                             |
+
+Generate a secret with `node -e "console.log(crypto.randomBytes(32).toString('hex'))"`.
+
+**Free Atlas connection string:** create a free M0 cluster at cloud.mongodb.com, add a database
+user (Database Access), allow your IP (Network Access), then Connect → Drivers and copy the
+string. Put `campushub` before the `?`. More in [docs/mongosh-cheatsheet.md](docs/mongosh-cheatsheet.md).
+
+Load the sample events once (this replaces the events in that database):
+
+```bash
+npm run seed --workspace server
+```
+
+Tests do not need any of this: they start a throwaway in-memory MongoDB (the first run
+downloads a MongoDB binary, about 100 MB).
 
 ## How to run
 
@@ -132,6 +161,7 @@ API tests (Vitest + Supertest) live in `server/tests` and run with `npm test`.
 | 56    | `v56-auth`          | bcrypt (cost 12) sign-up/login with in-memory users; 15-min access token; 7-day httpOnly refresh cookie, hashed and rotated; refresh and logout |
 | 57    | `v57-rbac`          | `requireAuth`, `requireRole`, `requireEventOwner`; owner-only event changes and registrant list; login rate limit; 401 vs 403 tests             |
 | 58    | `v58-mongodb`       | `docs/mongosh-cheatsheet.md` (insert/find/update/delete, indexes); `MONGODB_URI` in `.env.example`                                              |
+| 59    | `v59-mongoose`      | Mongoose connection, `Event` and `User` models with validators, events service on MongoDB, first seed script, in-memory MongoDB for tests       |
 
 ## Stack (exact installed versions)
 
@@ -164,3 +194,5 @@ API tests (Vitest + Supertest) live in `server/tests` and run with `npm test`.
 | jsonwebtoken                     | 9.0.3   |
 | cookie-parser                    | 1.4.7   |
 | express-rate-limit               | 8.7.1   |
+| mongoose                         | 9.11.2  |
+| mongodb-memory-server            | 11.3.0  |
