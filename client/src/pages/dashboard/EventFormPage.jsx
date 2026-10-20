@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router';
 import useFetch from '../../hooks/useFetch.js';
 import { apiFetch } from '../../api/client.js';
 import EventForm from '../../components/EventForm.jsx';
+import PosterUpload from '../../components/PosterUpload.jsx';
 import Spinner from '../../components/ui/Spinner.jsx';
 import ErrorState from '../../components/ui/ErrorState.jsx';
 import { emptyEventForm, toFormValues } from '../../features/events/eventFormValues.js';
@@ -38,6 +39,7 @@ export default function EventFormPage() {
         submitLabel={id ? 'Save changes' : 'Create event'}
         onSubmit={save}
       />
+      {id && <PosterUpload eventId={id} posterUrl={existing.data.posterUrl} />}
     </>
   );
 }

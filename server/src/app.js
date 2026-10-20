@@ -25,6 +25,15 @@ app.use(cors({ origin: [config.clientUrl], credentials: true }));
 app.use(express.json({ limit: '100kb' })); // parse JSON bodies, reject huge ones
 app.use(cookieParser()); // read cookies into req.cookies
 
+// Uploaded posters. CORP 'cross-origin' lets a front end on another domain show them in <img>;
+// helmet's default (same-origin) would block that.
+app.use(
+  '/uploads',
+  express.static(config.uploadDir, {
+    setHeaders: (res) => res.set('Cross-Origin-Resource-Policy', 'cross-origin'),
+  }),
+);
+
 app.get('/api/v1/health', (req, res) => {
   res.json({ status: 'ok', uptime: process.uptime() });
 });

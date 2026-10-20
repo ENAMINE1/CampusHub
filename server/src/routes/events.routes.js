@@ -5,6 +5,7 @@ import validate from '../middleware/validate.js';
 import requireAuth from '../middleware/requireAuth.js';
 import requireRole from '../middleware/requireRole.js';
 import requireEventOwner from '../middleware/requireEventOwner.js';
+import uploadPoster from '../middleware/uploadPoster.js';
 import registrationsRouter from './registrations.routes.js';
 import {
   createEventSchema,
@@ -43,6 +44,16 @@ router.delete(
   validate({ params: eventIdParams }),
   requireEventOwner,
   eventsController.remove,
+);
+
+// Poster upload: check who you are and that the event is yours BEFORE reading the file.
+router.post(
+  '/:id/poster',
+  staffOnly,
+  validate({ params: eventIdParams }),
+  requireEventOwner,
+  uploadPoster,
+  eventsController.uploadPoster,
 );
 
 // Nested resource: /api/v1/events/:id/registrations

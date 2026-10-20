@@ -29,15 +29,17 @@ export function setSessionExpiredHandler(handler) {
 }
 
 async function send(path, { body, headers, ...options }) {
+  // FormData (file uploads) goes as-is: the browser sets the multipart Content-Type itself.
+  const isForm = body instanceof FormData;
   try {
     return await fetch(`${BASE_URL}${path}`, {
       ...options,
       headers: {
-        ...(body && { 'Content-Type': 'application/json' }),
+        ...(body && !isForm && { 'Content-Type': 'application/json' }),
         ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
         ...headers,
       },
-      body: body ? JSON.stringify(body) : undefined,
+      body: isForm ? body : JSON.stringify(body), // JSON.stringify(undefined) is undefined: no body
       credentials: 'include', // send the refresh cookie to /auth routes
     });
   } catch (err) {
@@ -102,4 +104,11 @@ export async function apiFetch(path, options = {}) {
     return readResponse(await send(path, options));
   }
   return readResponse(res);
+}
+
+// Uploaded files come back as paths like /uploads/abc.png. In development the Vite proxy serves
+// them; in production the API lives on another domain, so put the API's origin in front.
+export function assetUrl(url) {
+  if (!url || /^https?:\/\//.test(url) || !/^https?:\/\//.test(BASE_URL)) return url;
+  return new URL(url, BASE_URL).href;
 }

@@ -37,14 +37,16 @@ with a single `package-lock.json`.
 
 Then edit `server/.env`:
 
-| Variable                                  | What it is                                                                   |
-| ----------------------------------------- | ---------------------------------------------------------------------------- |
-| `NODE_ENV`                                | `development` on your laptop, `production` on a server                       |
-| `PORT`                                    | Port the API listens on (3000)                                               |
-| `CLIENT_URL`                              | The React app's address; the only origin CORS allows (http://localhost:5173) |
-| `MONGODB_URI`                             | MongoDB connection string, including the database name `campushub`           |
-| `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET` | Two different random strings of 32+ characters that sign login tokens        |
-| `ACCESS_TOKEN_TTL`, `REFRESH_TOKEN_TTL`   | Token lifetimes (`15m` and `7d`)                                             |
+| Variable                                  | What it is                                                                                                                        |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `NODE_ENV`                                | `development` on your laptop, `production` on a server                                                                            |
+| `PORT`                                    | Port the API listens on (3000)                                                                                                    |
+| `CLIENT_URL`                              | The React app's address; the only origin CORS allows (http://localhost:5173)                                                      |
+| `MONGODB_URI`                             | MongoDB connection string, including the database name `campushub`                                                                |
+| `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET` | Two different random strings of 32+ characters that sign login tokens                                                             |
+| `ACCESS_TOKEN_TTL`, `REFRESH_TOKEN_TTL`   | Token lifetimes (`15m` and `7d`)                                                                                                  |
+| `STORAGE_DRIVER`                          | Where posters go: `local` disk (development) or `object` storage (production, see `server/src/services/storage/objectStorage.js`) |
+| `UPLOAD_DIR`                              | Folder for local uploads, relative to `server/` (`uploads`, git-ignored)                                                          |
 
 Generate a secret with `node -e "console.log(crypto.randomBytes(32).toString('hex'))"`.
 
@@ -105,6 +107,7 @@ arrive in later videos) is in [docs/api-contract.md](docs/api-contract.md).
 | GET    | /api/v1/clubs/:slug                 | One club with its upcoming events                                                                                                                      |
 | GET    | /api/v1/me/registrations            | My registrations with event details. Query `when=upcoming` or `past`. **Login**                                                                        |
 | GET    | /api/v1/admin/stats                 | Registrations per event and per category (aggregation). **Admin**                                                                                      |
+| POST   | /api/v1/events/:id/poster           | Upload a poster (multipart field `poster`; JPEG, PNG or WebP; max 2 MB). **Owner**                                                                     |
 | DELETE | /api/v1/events/:id/registrations/me | Cancel my registration and free the seat (until the event starts). **Login**                                                                           |
 | GET    | /api/v1/me/favorites                | My favorite events. **Login**                                                                                                                          |
 | PUT    | /api/v1/me/favorites/:eventId       | Add a favorite (idempotent, 204). **Login**                                                                                                            |
@@ -210,3 +213,4 @@ API tests (Vitest + Supertest) live in `server/tests` and run with `npm test`.
 | express-rate-limit               | 8.7.1   |
 | mongoose                         | 9.11.2  |
 | mongodb-memory-server            | 11.3.0  |
+| multer                           | 2.4.0   |

@@ -11,6 +11,7 @@ export default defineConfig({
     // Same origin means no CORS errors and cookies just work.
     proxy: {
       '/api': 'http://localhost:3000',
+      '/uploads': 'http://localhost:3000', // poster images
     },
   },
   test: {

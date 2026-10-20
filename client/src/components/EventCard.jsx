@@ -1,6 +1,7 @@
 // One event as a card. Everything it shows arrives through props.
 import { Link } from 'react-router';
 import formatDate from '../utils/formatDate.js';
+import { assetUrl } from '../api/client.js';
 import FavoriteButton from './FavoriteButton.jsx';
 import Card from './ui/Card.jsx';
 import Badge from './ui/Badge.jsx';
@@ -11,6 +12,15 @@ export default function EventCard({ event }) {
 
   return (
     <Card className="flex w-full flex-col">
+      {event.posterUrl && (
+        // loading="lazy": images below the fold download only when scrolled near.
+        <img
+          src={assetUrl(event.posterUrl)}
+          alt=""
+          loading="lazy"
+          className="mb-4 aspect-video w-full rounded-lg object-cover"
+        />
+      )}
       <div className="flex items-start justify-between gap-2">
         <div className="flex flex-wrap items-center gap-2">
           <Badge>{event.category}</Badge>

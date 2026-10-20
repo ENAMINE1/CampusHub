@@ -5,14 +5,19 @@ import path from 'node:path';
 import dotenv from 'dotenv';
 import * as z from 'zod';
 
+const serverDir = path.join(import.meta.dirname, '..', '..');
+
 // Real environment variables (set by the host in production) win over the .env file.
-dotenv.config({ path: path.join(import.meta.dirname, '..', '..', '.env'), quiet: true });
+dotenv.config({ path: path.join(serverDir, '.env'), quiet: true });
 
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().min(1).max(65535).default(3000),
   CLIENT_URL: z.url().default('http://localhost:5173'),
   MONGODB_URI: z.string().min(1, 'is required (see docs/mongosh-cheatsheet.md)'),
+  // Where uploaded posters go: 'local' disk (development) or 'object' storage (see storage/objectStorage.js).
+  STORAGE_DRIVER: z.enum(['local', 'object']).default('local'),
+  UPLOAD_DIR: z.string().default('uploads'),
   // Long random strings. Anyone who knows a secret can forge login tokens, so keep them out of git.
   JWT_ACCESS_SECRET: z.string().min(32, 'must be at least 32 characters'),
   JWT_REFRESH_SECRET: z.string().min(32, 'must be at least 32 characters'),
@@ -39,6 +44,9 @@ const config = {
   port: result.data.PORT,
   clientUrl: result.data.CLIENT_URL,
   mongoUri: result.data.MONGODB_URI,
+  storageDriver: result.data.STORAGE_DRIVER,
+  // A relative UPLOAD_DIR is resolved from the server folder, wherever you start the app from.
+  uploadDir: path.resolve(serverDir, result.data.UPLOAD_DIR),
   jwt: {
     accessSecret: result.data.JWT_ACCESS_SECRET,
     refreshSecret: result.data.JWT_REFRESH_SECRET,

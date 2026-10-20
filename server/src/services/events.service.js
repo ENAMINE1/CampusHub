@@ -1,9 +1,11 @@
 // Events business logic, stored in MongoDB through the Event model.
+import { randomUUID } from 'node:crypto';
 import Event from '../models/Event.js';
 import Registration from '../models/Registration.js';
 import ApiError from '../utils/ApiError.js';
 import { clubExists } from './clubs.service.js';
 import { forgetEvent } from './favorites.service.js';
+import storage from './storage.service.js';
 import { findDateProblems } from '../validators/event.schemas.js';
 
 // Shape a database document for the API: `id` instead of `_id`, no `__v`, the club as a small
@@ -104,4 +106,17 @@ export async function deleteEvent(id) {
   // FR-2.4: registrations for a deleted event would point at nothing, so remove them too.
   await Registration.deleteMany({ event: id });
   await forgetEvent(id);
+  await storage.remove(deleted.posterUrl);
+}
+
+// Save a new poster under a random name (never trust the uploaded file name), then point the event
+// at it and remove the old one.
+export async function setPoster(id, file, extension) {
+  const event = await findEventRecord(id);
+  const url = await storage.save(`${randomUUID()}${extension}`, file.buffer);
+  const oldUrl = event.posterUrl;
+  event.posterUrl = url;
+  await event.save();
+  await storage.remove(oldUrl);
+  return getEvent(id);
 }

@@ -8,6 +8,7 @@ import Badge from '../components/ui/Badge.jsx';
 import RegisterForEvent from '../components/RegisterForEvent.jsx';
 import FavoriteButton from '../components/FavoriteButton.jsx';
 import formatDate from '../utils/formatDate.js';
+import { assetUrl } from '../api/client.js';
 
 export default function EventDetailsPage() {
   const { id } = useParams();
@@ -23,6 +24,13 @@ export default function EventDetailsPage() {
 
   return (
     <Card className="p-8">
+      {event.posterUrl && (
+        <img
+          src={assetUrl(event.posterUrl)}
+          alt={`Poster for ${event.title}`}
+          className="mb-6 max-h-96 w-full rounded-lg object-cover"
+        />
+      )}
       <Link
         to="/events"
         className="text-sm font-semibold text-brand-700 dark:text-brand-300 underline"
