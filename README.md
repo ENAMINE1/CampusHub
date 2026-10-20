@@ -27,15 +27,25 @@ any step and see exactly what that video added.
 
 ```bash
 npm install
-npm run lint
-cd client
-npm install
-npm run dev
+npm install --prefix client
 ```
 
-The React app opens at http://localhost:5173.
+## How to run
 
-Run the tests from the repo root with `npm test` (Vitest + React Testing Library, in `client/src/test`).
+| Command           | Where     | What it does                                                     |
+| ----------------- | --------- | ---------------------------------------------------------------- |
+| `npm run dev`     | `client/` | Vite dev server at http://localhost:5173 with instant reload     |
+| `npm test`        | repo root | Vitest + React Testing Library tests in `client/src/test`        |
+| `npm run lint`    | repo root | ESLint over the whole repo                                       |
+| `npm run build`   | repo root | Production build into `client/dist`                              |
+| `npm run preview` | `client/` | Serves `client/dist` at http://localhost:4173 to check the build |
+
+### Deploying the client
+
+`client/vercel.json` rewrites every path to `index.html`. React Router handles URLs in the
+browser, so without this rule a refresh on `/events/evt-101` would return a 404 from the host.
+On Vercel, set the project root to `client/`; the build command is `npm run build` and the
+output directory is `dist`.
 
 ## Course map
 
@@ -55,6 +65,7 @@ Run the tests from the repo root with `npm test` (Vitest + React Testing Library
 | 42    | `v42-reducer`      | Registrations with `useReducer` and a My registrations page; `redux-comparison/registrationsSlice.js` (teaching only)                  |
 | 43    | `v43-performance`  | `ErrorBoundary` around pages, one justified `useMemo`, lazy-loaded My registrations route with `Suspense`                              |
 | 44    | `v44-react-tests`  | Vitest + React Testing Library: EventCard, search filter, registration form, reducer, error boundary                                   |
+| 45    | `v45-campushub-v2` | `build`/`preview` scripts, Vercel SPA rewrite, README run section (CampusHub v2: the React app)                                        |
 
 ## Stack (exact installed versions)
 
