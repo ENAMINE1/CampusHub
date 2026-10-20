@@ -1,8 +1,17 @@
-// Root component. For now it only proves React and Tailwind are wired up.
+// Root component: page layout with header, main content and footer.
+import Header from './components/Header.jsx';
+import Footer from './components/Footer.jsx';
+import EventCard from './components/EventCard.jsx';
+
 export default function App() {
   return (
-    <main className="min-h-screen bg-slate-50 p-8">
-      <h1 className="text-4xl font-bold text-indigo-700">CampusHub</h1>
-    </main>
+    <div className="flex min-h-screen flex-col bg-slate-50">
+      <Header />
+      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
+        <h1 className="mb-6 text-3xl font-bold text-slate-900">Upcoming events</h1>
+        <EventCard />
+      </main>
+      <Footer />
+    </div>
   );
 }

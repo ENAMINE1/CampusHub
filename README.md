@@ -37,10 +37,11 @@ The React app opens at http://localhost:5173.
 
 ## Course map
 
-| Video | Tag              | What it added                                                         |
-| ----- | ---------------- | --------------------------------------------------------------------- |
-| 4, 7  | `v07-foundation` | Git ignore rules, ESLint + Prettier, `.nvmrc`, README, AI log         |
-| 32    | `v32-vite-setup` | Vite + React app in `client/` with Tailwind 4 and a CampusHub heading |
+| Video | Tag              | What it added                                                               |
+| ----- | ---------------- | --------------------------------------------------------------------------- |
+| 4, 7  | `v07-foundation` | Git ignore rules, ESLint + Prettier, `.nvmrc`, README, AI log               |
+| 32    | `v32-vite-setup` | Vite + React app in `client/` with Tailwind 4 and a CampusHub heading       |
+| 33    | `v33-components` | `Header`, `Footer`, `EventCard` components, brand colour tokens in `@theme` |
 
 ## Stack (exact installed versions)
 

@@ -1,2 +1,9 @@
 /* Global styles. Tailwind 4 needs only this import: no tailwind.config.js, no PostCSS file. */
 @import 'tailwindcss';
+
+/* Brand colour tokens. Each one becomes classes like bg-brand-700 and text-brand-700. */
+@theme {
+  --color-brand-50: oklch(0.97 0.02 275);
+  --color-brand-600: oklch(0.51 0.23 277);
+  --color-brand-700: oklch(0.46 0.21 277);
+}
