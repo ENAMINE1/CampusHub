@@ -10,6 +10,9 @@ import notFound from './middleware/notFound.js';
 import errorHandler from './middleware/errorHandler.js';
 import eventsRouter from './routes/events.routes.js';
 import authRouter from './routes/auth.routes.js';
+import clubsRouter from './routes/clubs.routes.js';
+import meRouter from './routes/me.routes.js';
+import adminRouter from './routes/admin.routes.js';
 
 const app = express();
 
@@ -27,6 +30,9 @@ app.get('/api/v1/health', (req, res) => {
 });
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/events', eventsRouter);
+app.use('/api/v1/clubs', clubsRouter);
+app.use('/api/v1/me', meRouter);
+app.use('/api/v1/admin', adminRouter);
 
 app.use(notFound); // no route matched
 app.use(errorHandler); // must be last

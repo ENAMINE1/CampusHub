@@ -2,12 +2,19 @@
   {
     "slug": "code-club",
     "name": "Code Club",
-    "adminEmails": ["code.lead@campushub.dev"]
+    "adminEmails": ["code.lead@campushub.dev"],
+    "description": "Workshops, hack nights and talks for anyone who likes to build software."
   },
   {
     "slug": "cultural-society",
     "name": "Cultural Society",
-    "adminEmails": ["culture.lead@campushub.dev"]
+    "adminEmails": ["culture.lead@campushub.dev"],
+    "description": "Music, dance, theatre and the festivals that bring campus together."
   },
-  { "slug": "sports-council", "name": "Sports Council", "adminEmails": [] }
+  {
+    "slug": "sports-council",
+    "name": "Sports Council",
+    "adminEmails": [],
+    "description": "Inter-hostel tournaments, fitness drives and everything outdoors."
+  }
 ]

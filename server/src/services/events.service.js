@@ -7,12 +7,17 @@ import { findDateProblems } from '../validators/event.schemas.js';
 
 // Shape a database document for the API: `id` instead of `_id`, no `__v`, the club as a small
 // { id, name, slug } object (populated), and seatsLeft computed.
-function toEvent(doc) {
+export function toEvent(doc) {
   const { _id, __v, club, ...fields } = doc;
   return {
     ...fields,
     id: _id.toString(),
-    club: { id: club._id.toString(), name: club.name, slug: club.slug },
+    club: {
+      id: club._id.toString(),
+      name: club.name,
+      slug: club.slug,
+      logoUrl: club.logoUrl,
+    },
     seatsLeft: fields.capacity - fields.seatsTaken,
   };
 }
@@ -57,7 +62,8 @@ export async function listEvents({ category, q, when } = {}) {
 }
 
 export async function getEvent(id) {
-  const event = await Event.findById(id).populate('club', 'name slug').lean();
+  // Details also show the club's logo (SPEC.md FR-2.2).
+  const event = await Event.findById(id).populate('club', 'name slug logoUrl').lean();
   if (!event) throw ApiError.notFound('Event not found.');
   return toEvent(event);
 }

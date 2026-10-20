@@ -1,7 +1,7 @@
 // Registration rules (SPEC.md FR-3.1), stored in MongoDB through the Registration model.
 import Registration from '../models/Registration.js';
 import ApiError from '../utils/ApiError.js';
-import { findEventRecord } from './events.service.js';
+import { findEventRecord, toEvent } from './events.service.js';
 
 function toRegistration(doc) {
   return {
@@ -61,4 +61,26 @@ export async function listRegistrants(eventId) {
     email: r.user.email,
     registeredAt: r.createdAt,
   }));
+}
+
+// "My registrations" (SPEC.md FR-3.4): the user's active registrations with event details.
+export async function listMyRegistrations(user, when) {
+  const registrations = await Registration.find({ user: user._id, status: 'registered' })
+    .sort({ createdAt: -1 })
+    // Nested populate: fill in the event, and inside it the event's club.
+    .populate({ path: 'event', populate: { path: 'club', select: 'name slug logoUrl' } })
+    .lean();
+
+  const now = new Date();
+  return registrations
+    .filter((r) => {
+      if (when === 'upcoming') return r.event.startsAt >= now;
+      if (when === 'past') return r.event.startsAt < now;
+      return true;
+    })
+    .map((r) => ({
+      id: r._id.toString(),
+      registeredAt: r.createdAt,
+      event: toEvent(r.event),
+    }));
 }

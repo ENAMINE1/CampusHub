@@ -101,6 +101,10 @@ arrive in later videos) is in [docs/api-contract.md](docs/api-contract.md).
 | POST   | /api/v1/auth/refresh             | New access token from the refresh cookie (the cookie is rotated)                                 |
 | POST   | /api/v1/auth/logout              | Clears the cookie and forgets the stored token                                                   |
 | GET    | /api/v1/auth/me                  | The logged-in user. Needs `Authorization: Bearer <accessToken>`                                  |
+| GET    | /api/v1/clubs                    | All clubs                                                                                        |
+| GET    | /api/v1/clubs/:slug              | One club with its upcoming events                                                                |
+| GET    | /api/v1/me/registrations         | My registrations with event details. Query `when=upcoming` or `past`. **Login**                  |
+| GET    | /api/v1/admin/stats              | Registrations per event and per category (aggregation). **Admin**                                |
 
 No token or a bad token gives **401**; a valid token without permission gives **403**.
 
@@ -131,38 +135,39 @@ API tests (Vitest + Supertest) live in `server/tests` and run with `npm test`.
 
 ## Course map
 
-| Video | Tag                 | What it added                                                                                                                                    |
-| ----- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 4, 7  | `v07-foundation`    | Git ignore rules, ESLint + Prettier, `.nvmrc`, README, AI log                                                                                    |
-| 32    | `v32-vite-setup`    | Vite + React app in `client/` with Tailwind 4 and a CampusHub heading                                                                            |
-| 33    | `v33-components`    | `Header`, `Footer`, `EventCard` components, brand colour tokens in `@theme`                                                                      |
-| 34    | `v34-props-lists`   | Sample `events.js`, `EventList` with keys, `EmptyState`, "Full" vs seats-left rendering                                                          |
-| 35    | `v35-usestate`      | Search, category filter and favorites in `useState`; filtered list derived, not stored                                                           |
-| 36    | `v36-forms`         | Controlled `RegistrationForm` with one state object, blur and submit validation, accessible errors                                               |
-| 37    | `v37-useeffect`     | Events fetched from `public/data/events.json` with loading/error states, abort cleanup, tab title, 300 ms search debounce                        |
-| 38    | `v38-custom-hooks`  | `useFetch`, `useDebounce`, `useLocalStorage` hooks; favorites survive a reload                                                                   |
-| 39    | `v39-routing`       | React Router layout with `Outlet` and `NavLink`; Home, Events, Event details, Clubs, Register, NotFound; filters in the URL                      |
-| 40    | `v40-ui-kit`        | `components/ui` (Button, Input, Select, Card, Badge, Spinner, ErrorState, EmptyState, Modal with focus trap and Esc); pages refactored           |
-| 41    | `v41-context`       | `ThemeContext` (dark mode), `FavoritesContext` (no more prop drilling), in-memory `AuthContext`                                                  |
-| 42    | `v42-reducer`       | Registrations with `useReducer` and a My registrations page; `redux-comparison/registrationsSlice.js` (teaching only)                            |
-| 43    | `v43-performance`   | `ErrorBoundary` around pages, one justified `useMemo`, lazy-loaded My registrations route with `Suspense`                                        |
-| 44    | `v44-react-tests`   | Vitest + React Testing Library: EventCard, search filter, registration form, reducer, error boundary                                             |
-| 45    | `v45-campushub-v2`  | `build`/`preview` scripts, Vercel SPA rewrite, README run section (CampusHub v2: the React app)                                                  |
-| 46    | `v46-node-npm`      | `server/` package with a first Node script; npm workspaces with one root lockfile                                                                |
-| 47    | `v47-core-modules`  | `server/scripts/report.js` reads `events.json` with `fs/promises` and `path`, writes a summary report                                            |
-| 48    | `v48-express`       | Express app: `GET /api/health`, `GET /api/events`; `app.js` / `server.js` split; `node --watch`; one `npm run dev` for both                      |
-| 49    | `v49-rest-design`   | `docs/api-contract.md`: endpoints, auth levels, status codes, one error shape (docs only)                                                        |
-| 50    | `v50-routing`       | `express.Router`, routes → controllers → services; events CRUD on an in-memory array with filters; `/api/v1`                                     |
-| 51    | `v51-middleware`    | Request logger (morgan), helmet, CORS allowlist with credentials, 404 handler, four-argument error handler                                       |
-| 52    | `v52-validation`    | Zod schemas + `validate` middleware, `ApiError`, one error shape; in-memory registrations (409 duplicate, 422 full or closed)                    |
-| 53    | `v53-react-express` | React calls the API through `api/client.js` (`ApiError`), Vite proxy for `/api`, `VITE_API_URL`, API errors shown in the UI                      |
-| 54    | `v54-config`        | `dotenv` + `config/index.js` validates env vars at startup; `server/.env.example`, `client/.env.example`                                         |
-| 55    | `v55-api-tests`     | Supertest suites for events and registrations; root `npm test` runs both workspaces; README API section                                          |
-| 56    | `v56-auth`          | bcrypt (cost 12) sign-up/login with in-memory users; 15-min access token; 7-day httpOnly refresh cookie, hashed and rotated; refresh and logout  |
-| 57    | `v57-rbac`          | `requireAuth`, `requireRole`, `requireEventOwner`; owner-only event changes and registrant list; login rate limit; 401 vs 403 tests              |
-| 58    | `v58-mongodb`       | `docs/mongosh-cheatsheet.md` (insert/find/update/delete, indexes); `MONGODB_URI` in `.env.example`                                               |
-| 59    | `v59-mongoose`      | Mongoose connection, `Event` and `User` models with validators, events service on MongoDB, first seed script, in-memory MongoDB for tests        |
-| 60    | `v60-data-modeling` | `Club` model and event `club` reference, users in MongoDB, `Registration` model with unique `{ event, user }`; registering needs a student login |
+| Video | Tag                        | What it added                                                                                                                                    |
+| ----- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 4, 7  | `v07-foundation`           | Git ignore rules, ESLint + Prettier, `.nvmrc`, README, AI log                                                                                    |
+| 32    | `v32-vite-setup`           | Vite + React app in `client/` with Tailwind 4 and a CampusHub heading                                                                            |
+| 33    | `v33-components`           | `Header`, `Footer`, `EventCard` components, brand colour tokens in `@theme`                                                                      |
+| 34    | `v34-props-lists`          | Sample `events.js`, `EventList` with keys, `EmptyState`, "Full" vs seats-left rendering                                                          |
+| 35    | `v35-usestate`             | Search, category filter and favorites in `useState`; filtered list derived, not stored                                                           |
+| 36    | `v36-forms`                | Controlled `RegistrationForm` with one state object, blur and submit validation, accessible errors                                               |
+| 37    | `v37-useeffect`            | Events fetched from `public/data/events.json` with loading/error states, abort cleanup, tab title, 300 ms search debounce                        |
+| 38    | `v38-custom-hooks`         | `useFetch`, `useDebounce`, `useLocalStorage` hooks; favorites survive a reload                                                                   |
+| 39    | `v39-routing`              | React Router layout with `Outlet` and `NavLink`; Home, Events, Event details, Clubs, Register, NotFound; filters in the URL                      |
+| 40    | `v40-ui-kit`               | `components/ui` (Button, Input, Select, Card, Badge, Spinner, ErrorState, EmptyState, Modal with focus trap and Esc); pages refactored           |
+| 41    | `v41-context`              | `ThemeContext` (dark mode), `FavoritesContext` (no more prop drilling), in-memory `AuthContext`                                                  |
+| 42    | `v42-reducer`              | Registrations with `useReducer` and a My registrations page; `redux-comparison/registrationsSlice.js` (teaching only)                            |
+| 43    | `v43-performance`          | `ErrorBoundary` around pages, one justified `useMemo`, lazy-loaded My registrations route with `Suspense`                                        |
+| 44    | `v44-react-tests`          | Vitest + React Testing Library: EventCard, search filter, registration form, reducer, error boundary                                             |
+| 45    | `v45-campushub-v2`         | `build`/`preview` scripts, Vercel SPA rewrite, README run section (CampusHub v2: the React app)                                                  |
+| 46    | `v46-node-npm`             | `server/` package with a first Node script; npm workspaces with one root lockfile                                                                |
+| 47    | `v47-core-modules`         | `server/scripts/report.js` reads `events.json` with `fs/promises` and `path`, writes a summary report                                            |
+| 48    | `v48-express`              | Express app: `GET /api/health`, `GET /api/events`; `app.js` / `server.js` split; `node --watch`; one `npm run dev` for both                      |
+| 49    | `v49-rest-design`          | `docs/api-contract.md`: endpoints, auth levels, status codes, one error shape (docs only)                                                        |
+| 50    | `v50-routing`              | `express.Router`, routes → controllers → services; events CRUD on an in-memory array with filters; `/api/v1`                                     |
+| 51    | `v51-middleware`           | Request logger (morgan), helmet, CORS allowlist with credentials, 404 handler, four-argument error handler                                       |
+| 52    | `v52-validation`           | Zod schemas + `validate` middleware, `ApiError`, one error shape; in-memory registrations (409 duplicate, 422 full or closed)                    |
+| 53    | `v53-react-express`        | React calls the API through `api/client.js` (`ApiError`), Vite proxy for `/api`, `VITE_API_URL`, API errors shown in the UI                      |
+| 54    | `v54-config`               | `dotenv` + `config/index.js` validates env vars at startup; `server/.env.example`, `client/.env.example`                                         |
+| 55    | `v55-api-tests`            | Supertest suites for events and registrations; root `npm test` runs both workspaces; README API section                                          |
+| 56    | `v56-auth`                 | bcrypt (cost 12) sign-up/login with in-memory users; 15-min access token; 7-day httpOnly refresh cookie, hashed and rotated; refresh and logout  |
+| 57    | `v57-rbac`                 | `requireAuth`, `requireRole`, `requireEventOwner`; owner-only event changes and registrant list; login rate limit; 401 vs 403 tests              |
+| 58    | `v58-mongodb`              | `docs/mongosh-cheatsheet.md` (insert/find/update/delete, indexes); `MONGODB_URI` in `.env.example`                                               |
+| 59    | `v59-mongoose`             | Mongoose connection, `Event` and `User` models with validators, events service on MongoDB, first seed script, in-memory MongoDB for tests        |
+| 60    | `v60-data-modeling`        | `Club` model and event `club` reference, users in MongoDB, `Registration` model with unique `{ event, user }`; registering needs a student login |
+| 61    | `v61-populate-aggregation` | Populated club with logo on event details, `GET /clubs` and `/clubs/:slug`, `GET /me/registrations`, `GET /admin/stats` aggregation              |
 
 ## Stack (exact installed versions)
 
