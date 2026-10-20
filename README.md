@@ -28,19 +28,29 @@ any step and see exactly what that video added.
 ```bash
 npm install
 npm run lint
+cd client
+npm install
+npm run dev
 ```
+
+The React app opens at http://localhost:5173.
 
 ## Course map
 
-| Video | Tag              | What it added                                                 |
-| ----- | ---------------- | ------------------------------------------------------------- |
-| 4, 7  | `v07-foundation` | Git ignore rules, ESLint + Prettier, `.nvmrc`, README, AI log |
+| Video | Tag              | What it added                                                         |
+| ----- | ---------------- | --------------------------------------------------------------------- |
+| 4, 7  | `v07-foundation` | Git ignore rules, ESLint + Prettier, `.nvmrc`, README, AI log         |
+| 32    | `v32-vite-setup` | Vite + React app in `client/` with Tailwind 4 and a CampusHub heading |
 
 ## Stack (exact installed versions)
 
-| Tool     | Version |
-| -------- | ------- |
-| Node.js  | 24.22.0 |
-| npm      | 12.2.0  |
-| eslint   | 10.13.0 |
-| prettier | 3.9.10  |
+| Tool                           | Version |
+| ------------------------------ | ------- |
+| Node.js                        | 24.22.0 |
+| npm                            | 12.2.0  |
+| eslint                         | 10.13.0 |
+| prettier                       | 3.9.10  |
+| react, react-dom               | 19.2.9  |
+| vite                           | 8.3.4   |
+| @vitejs/plugin-react           | 6.1.2   |
+| tailwindcss, @tailwindcss/vite | 4.3.3   |

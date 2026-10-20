@@ -1,0 +1,2 @@
+/* Global styles. Tailwind 4 needs only this import: no tailwind.config.js, no PostCSS file. */
+@import 'tailwindcss';
