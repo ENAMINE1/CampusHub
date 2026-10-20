@@ -27,18 +27,22 @@ any step and see exactly what that video added.
 
 ```bash
 npm install
-npm install --prefix client
 ```
+
+The repo is an npm workspace: one `npm install` at the root installs `client/` and `server/`,
+with a single `package-lock.json`.
 
 ## How to run
 
-| Command           | Where     | What it does                                                     |
-| ----------------- | --------- | ---------------------------------------------------------------- |
-| `npm run dev`     | `client/` | Vite dev server at http://localhost:5173 with instant reload     |
-| `npm test`        | repo root | Vitest + React Testing Library tests in `client/src/test`        |
-| `npm run lint`    | repo root | ESLint over the whole repo                                       |
-| `npm run build`   | repo root | Production build into `client/dist`                              |
-| `npm run preview` | `client/` | Serves `client/dist` at http://localhost:4173 to check the build |
+All commands run from the repo root.
+
+| Command                              | What it does                                                                  |
+| ------------------------------------ | ----------------------------------------------------------------------------- |
+| `npm run dev`                        | Vite dev server at http://localhost:5173 with instant reload                  |
+| `npm test`                           | Every workspace's tests (Vitest + React Testing Library in `client/src/test`) |
+| `npm run lint`                       | ESLint over the whole repo                                                    |
+| `npm run build`                      | Production build into `client/dist`                                           |
+| `npm run preview --workspace client` | Serves `client/dist` at http://localhost:4173 to check the build              |
 
 ### Deploying the client
 
@@ -66,6 +70,7 @@ output directory is `dist`.
 | 43    | `v43-performance`  | `ErrorBoundary` around pages, one justified `useMemo`, lazy-loaded My registrations route with `Suspense`                              |
 | 44    | `v44-react-tests`  | Vitest + React Testing Library: EventCard, search filter, registration form, reducer, error boundary                                   |
 | 45    | `v45-campushub-v2` | `build`/`preview` scripts, Vercel SPA rewrite, README run section (CampusHub v2: the React app)                                        |
+| 46    | `v46-node-npm`     | `server/` package with a first Node script; npm workspaces with one root lockfile                                                      |
 
 ## Stack (exact installed versions)
 
