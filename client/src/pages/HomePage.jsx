@@ -6,12 +6,8 @@ import Spinner from '../components/ui/Spinner.jsx';
 import ErrorState from '../components/ui/ErrorState.jsx';
 
 export default function HomePage() {
-  const { data, isLoading, error } = useFetch('/events');
-
-  // Copy before sorting: sort() changes the array in place, and `data` belongs to the hook.
-  const nextEvents = [...(data ?? [])]
-    .sort((a, b) => a.startsAt.localeCompare(b.startsAt))
-    .slice(0, 3);
+  // Ask the server for exactly what we show: the next three upcoming events.
+  const { data, isLoading, error } = useFetch('/events?when=upcoming&limit=3');
 
   return (
     <>
@@ -34,7 +30,7 @@ export default function HomePage() {
       </h2>
       {isLoading && <Spinner label="Loading events…" />}
       {error && <ErrorState message={error} />}
-      {data && <EventList events={nextEvents} />}
+      {data && <EventList events={data.data} />}
     </>
   );
 }

@@ -57,8 +57,13 @@ export const updateEventSchema = eventFields.partial();
 
 export const eventIdParams = z.strictObject({ id: objectId });
 
+// Query strings are always text, so z.coerce turns "2" into the number 2.
 export const listEventsQuery = z.strictObject({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(50).default(12), // capped so nobody can ask for everything
+  sort: z.enum(['date', 'title']).default('date'),
   category: z.enum(CATEGORIES).optional(),
+  club: objectId.optional(),
   q: z.string().trim().max(100).optional(),
   when: z.enum(['upcoming', 'past']).optional(),
 });

@@ -38,17 +38,17 @@ describe('GET /api/v1/events', () => {
   it('lists events with a computed seatsLeft', async () => {
     const res = await api.get('/api/v1/events');
     expect(res.status).toBe(200);
-    expect(res.body.length).toBeGreaterThan(0);
-    const [first] = res.body;
+    expect(res.body).toMatchObject({ page: 1, total: 2, totalPages: 1 });
+    const [first] = res.body.data;
     expect(first.seatsLeft).toBe(first.capacity - first.seatsTaken);
   });
 
   it('filters by category and text search', async () => {
     const tech = await api.get('/api/v1/events?category=tech');
-    expect(tech.body.every((e) => e.category === 'tech')).toBe(true);
+    expect(tech.body.data.every((e) => e.category === 'tech')).toBe(true);
 
     const search = await api.get('/api/v1/events?q=GIT');
-    expect(search.body.map((e) => e.title)).toContain('Intro to Git Workshop');
+    expect(search.body.data.map((e) => e.title)).toContain('Intro to Git Workshop');
   });
 
   it('rejects an unknown category with 422 and field details', async () => {

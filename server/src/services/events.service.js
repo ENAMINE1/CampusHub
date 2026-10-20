@@ -22,11 +22,6 @@ export function toEvent(doc) {
   };
 }
 
-// User text goes into a regular expression, so escape characters like . * ( that have a meaning there.
-function escapeRegex(text) {
-  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
 // Find the stored event document or throw a 404. Other services use it too.
 export async function findEventRecord(id) {
   const event = await Event.findById(id);
@@ -42,23 +37,29 @@ async function assertClubExists(clubId) {
   }
 }
 
-export async function listEvents({ category, q, when } = {}) {
+const SORTS = { date: { startsAt: 1 }, title: { title: 1 } };
+
+export async function listEvents({ page, limit, sort, category, club, q, when }) {
   const filter = {};
   if (category) filter.category = category;
-  if (q) {
-    const pattern = new RegExp(escapeRegex(q), 'i');
-    filter.$or = [{ title: pattern }, { description: pattern }];
-  }
+  if (club) filter.club = club;
+  // $text uses the text index: it matches whole words ("git" finds "Git Workshop"), ignoring case.
+  if (q) filter.$text = { $search: q };
   if (when === 'upcoming') filter.startsAt = { $gte: new Date() };
   if (when === 'past') filter.startsAt = { $lt: new Date() };
 
-  // populate() replaces each club id with the club's name and slug, in one extra query.
-  // lean() returns plain objects instead of full Mongoose documents: faster for read-only lists.
-  const events = await Event.find(filter)
-    .sort({ startsAt: 1 })
-    .populate('club', 'name slug')
-    .lean();
-  return events.map(toEvent);
+  // Run the page query and the count at the same time: neither needs the other's result.
+  // populate() swaps each club id for the club's name and slug; lean() returns plain objects.
+  const [events, total] = await Promise.all([
+    Event.find(filter)
+      .sort(SORTS[sort])
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .populate('club', 'name slug')
+      .lean(),
+    Event.countDocuments(filter),
+  ]);
+  return { data: events.map(toEvent), page, totalPages: Math.ceil(total / limit), total };
 }
 
 export async function getEvent(id) {

@@ -31,4 +31,11 @@ const eventSchema = new mongoose.Schema(
   { timestamps: true }, // adds createdAt and updatedAt automatically
 );
 
+// Indexes (SPEC.md): each one matches a query the API runs, so MongoDB can jump to the right
+// documents instead of reading the whole collection. Check with .explain(): IXSCAN, not COLLSCAN.
+eventSchema.index({ startsAt: 1 }); // upcoming/past, default sort
+eventSchema.index({ category: 1, startsAt: 1 }); // filter by category, sorted by date
+eventSchema.index({ club: 1, startsAt: 1 }); // a club's events, sorted by date
+eventSchema.index({ title: 'text', description: 'text' }); // ?q= word search
+
 export default mongoose.model('Event', eventSchema);

@@ -6,6 +6,8 @@ import mongoose from 'mongoose';
 
 beforeAll(async () => {
   await mongoose.connect(process.env.MONGODB_URI, { dbName: `test-${randomUUID()}` });
+  // Build every model's indexes before the tests run: unique emails and $text search need them.
+  await mongoose.connection.syncIndexes();
 });
 
 afterAll(async () => {
