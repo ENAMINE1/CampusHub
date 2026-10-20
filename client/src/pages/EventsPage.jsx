@@ -1,5 +1,5 @@
 // Events page: search, filter and favorite the full list of events.
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router';
 import EventFilters from '../components/EventFilters.jsx';
 import EventList from '../components/EventList.jsx';
@@ -24,12 +24,18 @@ export default function EventsPage() {
     setSearchParams(next, { replace: true });
   }
 
-  const query = debouncedSearch.trim().toLowerCase();
-  const visibleEvents = (data ?? []).filter(
-    (event) =>
-      event.title.toLowerCase().includes(query) &&
-      (category === '' || event.category === category),
-  );
+  // Why useMemo here: the input updates the URL on every keystroke, which re-renders this page,
+  // but the list only changes when the debounced text, category or data change. useMemo skips
+  // re-filtering on the in-between renders. With 8 events it hardly matters; with thousands it does.
+  // Measure before reaching for useMemo elsewhere.
+  const visibleEvents = useMemo(() => {
+    const query = debouncedSearch.trim().toLowerCase();
+    return (data ?? []).filter(
+      (event) =>
+        event.title.toLowerCase().includes(query) &&
+        (category === '' || event.category === category),
+    );
+  }, [data, debouncedSearch, category]);
 
   useEffect(() => {
     document.title = `CampusHub · ${visibleEvents.length} events`;

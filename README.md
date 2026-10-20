@@ -51,6 +51,7 @@ The React app opens at http://localhost:5173.
 | 40    | `v40-ui-kit`       | `components/ui` (Button, Input, Select, Card, Badge, Spinner, ErrorState, EmptyState, Modal with focus trap and Esc); pages refactored |
 | 41    | `v41-context`      | `ThemeContext` (dark mode), `FavoritesContext` (no more prop drilling), in-memory `AuthContext`                                        |
 | 42    | `v42-reducer`      | Registrations with `useReducer` and a My registrations page; `redux-comparison/registrationsSlice.js` (teaching only)                  |
+| 43    | `v43-performance`  | `ErrorBoundary` around pages, one justified `useMemo`, lazy-loaded My registrations route with `Suspense`                              |
 
 ## Stack (exact installed versions)
 
