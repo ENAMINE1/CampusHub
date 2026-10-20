@@ -4,6 +4,7 @@ import express from 'express';
 import config from './config/index.js';
 import helmet from 'helmet';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import requestLogger from './middleware/requestLogger.js';
 import notFound from './middleware/notFound.js';
 import errorHandler from './middleware/errorHandler.js';
@@ -19,6 +20,7 @@ app.use(helmet()); // safe default security headers
 // Classic mistake: cors() with no options allows every origin, and credentials will not work.
 app.use(cors({ origin: [config.clientUrl], credentials: true }));
 app.use(express.json({ limit: '100kb' })); // parse JSON bodies, reject huge ones
+app.use(cookieParser()); // read cookies into req.cookies
 
 app.get('/api/v1/health', (req, res) => {
   res.json({ status: 'ok', uptime: process.uptime() });

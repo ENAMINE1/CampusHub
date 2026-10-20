@@ -44,3 +44,8 @@ export async function verifyCredentials(email, password) {
     throw new ApiError(401, 'INVALID_CREDENTIALS', 'Email or password is incorrect.');
   return user;
 }
+
+// Remember (or forget, with null) the hash of the user's current refresh token.
+export function saveRefreshTokenHash(user, hash) {
+  user.refreshTokenHash = hash;
+}

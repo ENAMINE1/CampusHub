@@ -59,3 +59,59 @@ describe('POST /api/v1/auth/login', () => {
     expect(wrongPassword.body).toEqual(unknownEmail.body);
   });
 });
+
+describe('refresh token cookie', () => {
+  // An agent keeps cookies between requests, like a browser does.
+  async function loggedInAgent(email) {
+    const agent = request.agent(app);
+    const res = await agent
+      .post('/api/v1/auth/register')
+      .send({ name: 'Cookie Tester', email, password: 'longenough1' });
+    return { agent, setCookie: res.headers['set-cookie'][0] };
+  }
+
+  it('is httpOnly and limited to the auth path', async () => {
+    const { setCookie } = await loggedInAgent('cookie1@campus.edu');
+    expect(setCookie).toMatch(/^refreshToken=/);
+    expect(setCookie).toMatch(/HttpOnly/i);
+    expect(setCookie).toMatch(/Path=\/api\/v1\/auth/);
+  });
+
+  it('gives a new access token and rotates the cookie', async () => {
+    const { agent, setCookie } = await loggedInAgent('cookie2@campus.edu');
+    const res = await agent.post('/api/v1/auth/refresh');
+    expect(res.status).toBe(200);
+    expect(res.body.user.email).toBe('cookie2@campus.edu');
+    expect(res.body.accessToken).toEqual(expect.any(String));
+    expect(res.headers['set-cookie'][0]).not.toBe(setCookie);
+  });
+
+  it('rejects a replayed old refresh token and ends the session', async () => {
+    const { agent, setCookie } = await loggedInAgent('cookie3@campus.edu');
+    const oldCookie = setCookie.split(';')[0];
+    await agent.post('/api/v1/auth/refresh'); // rotates: the old token is now used up
+
+    const replay = await request(app)
+      .post('/api/v1/auth/refresh')
+      .set('Cookie', oldCookie);
+    expect(replay.status).toBe(401);
+    // Reuse ended every session, so even the newest cookie no longer works.
+    expect((await agent.post('/api/v1/auth/refresh')).status).toBe(401);
+  });
+
+  it('returns 401 without a cookie', async () => {
+    const res = await request(app).post('/api/v1/auth/refresh');
+    expect(res.status).toBe(401);
+    expect(res.body.error.code).toBe('SESSION_EXPIRED');
+  });
+
+  it('logout clears the cookie and the stored token', async () => {
+    const { agent, setCookie } = await loggedInAgent('cookie4@campus.edu');
+    expect((await agent.post('/api/v1/auth/logout')).status).toBe(204);
+
+    const retry = await request(app)
+      .post('/api/v1/auth/refresh')
+      .set('Cookie', setCookie.split(';')[0]);
+    expect(retry.status).toBe(401);
+  });
+});
