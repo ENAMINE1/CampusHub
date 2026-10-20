@@ -74,6 +74,7 @@ output directory is `dist`.
 | 47    | `v47-core-modules` | `server/scripts/report.js` reads `events.json` with `fs/promises` and `path`, writes a summary report                                  |
 | 48    | `v48-express`      | Express app: `GET /api/health`, `GET /api/events`; `app.js` / `server.js` split; `node --watch`; one `npm run dev` for both            |
 | 49    | `v49-rest-design`  | `docs/api-contract.md`: endpoints, auth levels, status codes, one error shape (docs only)                                              |
+| 50    | `v50-routing`      | `express.Router`, routes → controllers → services; events CRUD on an in-memory array with filters; `/api/v1`                           |
 
 ## Stack (exact installed versions)
 
