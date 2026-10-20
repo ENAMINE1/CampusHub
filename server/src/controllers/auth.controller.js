@@ -62,3 +62,7 @@ export function logout(req, res) {
   res.clearCookie(REFRESH_COOKIE, cookieOptions);
   res.status(204).end();
 }
+
+export function me(req, res) {
+  res.json({ user: userService.toPublicUser(req.user) });
+}

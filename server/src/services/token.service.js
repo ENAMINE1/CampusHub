@@ -4,6 +4,7 @@
 import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
 import jwt from 'jsonwebtoken';
 import config from '../config/index.js';
+import ApiError from '../utils/ApiError.js';
 
 export function createAccessToken(user) {
   // Put only what the server needs to authorise a request in the token: it is readable by anyone.
@@ -39,4 +40,17 @@ export function tokenMatchesHash(token, storedHash) {
   // timingSafeEqual takes the same time whether the first or last character differs,
   // so an attacker cannot learn the hash by measuring response times.
   return timingSafeEqual(Buffer.from(hashToken(token)), Buffer.from(storedHash));
+}
+
+// Returns the access token's payload, or throws a 401 that tells the client what went wrong.
+// TOKEN_EXPIRED is the client's cue to call /auth/refresh and retry.
+export function verifyAccessToken(token) {
+  try {
+    return jwt.verify(token, config.jwt.accessSecret);
+  } catch (err) {
+    if (err.name === 'TokenExpiredError') {
+      throw new ApiError(401, 'TOKEN_EXPIRED', 'Your session expired. Please refresh.');
+    }
+    throw new ApiError(401, 'UNAUTHENTICATED', 'Please log in.');
+  }
 }

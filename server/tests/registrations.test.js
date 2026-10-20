@@ -1,13 +1,21 @@
 // API tests for registering: success, duplicate (409), full (422) and unknown event (404).
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import request from 'supertest';
 import app from '../src/app.js';
-import { validEventBody } from './helpers.js';
+import { authHeaderFor, validEventBody } from './helpers.js';
 
 const api = request(app);
+let admin;
+
+beforeAll(async () => {
+  admin = await authHeaderFor('admin');
+});
 
 async function createEvent(overrides) {
-  const res = await api.post('/api/v1/events').send(validEventBody(overrides));
+  const res = await api
+    .post('/api/v1/events')
+    .set('Authorization', admin)
+    .send(validEventBody(overrides));
   return res.body.id;
 }
 

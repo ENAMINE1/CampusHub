@@ -1,10 +1,15 @@
 // API tests for /api/v1/events. Supertest sends real HTTP requests to the app without opening a port.
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import request from 'supertest';
 import app from '../src/app.js';
-import { validEventBody } from './helpers.js';
+import { authHeaderFor, validEventBody } from './helpers.js';
 
 const api = request(app);
+let admin; // Authorization header of an admin, created once for this file
+
+beforeAll(async () => {
+  admin = await authHeaderFor('admin');
+});
 
 describe('GET /api/v1/health', () => {
   it('reports the server is up', async () => {
@@ -60,29 +65,38 @@ describe('GET /api/v1/events/:id', () => {
 
 describe('POST, PATCH and DELETE /api/v1/events', () => {
   it('creates, updates and deletes an event', async () => {
-    const created = await api.post('/api/v1/events').send(validEventBody());
+    const created = await api
+      .post('/api/v1/events')
+      .set('Authorization', admin)
+      .send(validEventBody());
     expect(created.status).toBe(201);
     expect(created.body).toMatchObject({ seatsTaken: 0, seatsLeft: 2 });
     expect(created.body.club).toEqual({ name: 'Code Club', slug: 'code-club' });
     const url = `/api/v1/events/${created.body.id}`;
 
-    const updated = await api.patch(url).send({ title: 'Renamed Talk' });
+    const updated = await api
+      .patch(url)
+      .set('Authorization', admin)
+      .send({ title: 'Renamed Talk' });
     expect(updated.status).toBe(200);
     expect(updated.body.title).toBe('Renamed Talk');
 
-    expect((await api.delete(url)).status).toBe(204);
+    expect((await api.delete(url).set('Authorization', admin)).status).toBe(204);
     expect((await api.get(url)).status).toBe(404);
   });
 
   it('rejects invalid fields, unknown keys and impossible dates', async () => {
-    const res = await api.post('/api/v1/events').send(
-      validEventBody({
-        title: 'Hi',
-        capacity: 0,
-        seatsTaken: 99,
-        endsAt: validEventBody().registrationDeadline,
-      }),
-    );
+    const res = await api
+      .post('/api/v1/events')
+      .set('Authorization', admin)
+      .send(
+        validEventBody({
+          title: 'Hi',
+          capacity: 0,
+          seatsTaken: 99,
+          endsAt: validEventBody().registrationDeadline,
+        }),
+      );
     expect(res.status).toBe(422);
     const paths = res.body.error.details.map((d) => d.path);
     expect(paths).toEqual(expect.arrayContaining(['title', 'capacity', 'endsAt']));
@@ -94,6 +108,7 @@ describe('POST, PATCH and DELETE /api/v1/events', () => {
   it('answers broken JSON with 400', async () => {
     const res = await api
       .post('/api/v1/events')
+      .set('Authorization', admin)
       .set('Content-Type', 'application/json')
       .send('{oops');
     expect(res.status).toBe(400);

@@ -19,7 +19,8 @@ export function findUserById(id) {
   return users.find((u) => u.id === id) ?? null;
 }
 
-export async function createUser({ name, email, password }) {
+// role is only ever passed by server code (demo data, tests); sign-up always creates students.
+export async function createUser({ name, email, password, role = 'student' }) {
   if (users.some((u) => u.email === email)) {
     throw new ApiError(409, 'EMAIL_TAKEN', 'An account with this email already exists.');
   }
@@ -27,7 +28,7 @@ export async function createUser({ name, email, password }) {
     id: randomUUID(),
     name,
     email,
-    role: 'student',
+    role,
     passwordHash: await bcrypt.hash(password, BCRYPT_COST),
     refreshTokenHash: null,
   };
