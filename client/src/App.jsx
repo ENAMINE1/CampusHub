@@ -6,6 +6,7 @@ import EventsPage from './pages/EventsPage.jsx';
 import EventDetailsPage from './pages/EventDetailsPage.jsx';
 import ClubsPage from './pages/ClubsPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
+import MyRegistrationsPage from './pages/MyRegistrationsPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 
 export default function App() {
@@ -17,6 +18,7 @@ export default function App() {
         <Route path="events/:id" element={<EventDetailsPage />} />
         <Route path="clubs" element={<ClubsPage />} />
         <Route path="register" element={<RegisterPage />} />
+        <Route path="me/registrations" element={<MyRegistrationsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

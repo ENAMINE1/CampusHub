@@ -50,17 +50,19 @@ The React app opens at http://localhost:5173.
 | 39    | `v39-routing`      | React Router layout with `Outlet` and `NavLink`; Home, Events, Event details, Clubs, Register, NotFound; filters in the URL            |
 | 40    | `v40-ui-kit`       | `components/ui` (Button, Input, Select, Card, Badge, Spinner, ErrorState, EmptyState, Modal with focus trap and Esc); pages refactored |
 | 41    | `v41-context`      | `ThemeContext` (dark mode), `FavoritesContext` (no more prop drilling), in-memory `AuthContext`                                        |
+| 42    | `v42-reducer`      | Registrations with `useReducer` and a My registrations page; `redux-comparison/registrationsSlice.js` (teaching only)                  |
 
 ## Stack (exact installed versions)
 
-| Tool                           | Version |
-| ------------------------------ | ------- |
-| Node.js                        | 24.22.0 |
-| npm                            | 12.2.0  |
-| eslint                         | 10.13.0 |
-| prettier                       | 3.9.10  |
-| react, react-dom               | 19.2.9  |
-| vite                           | 8.3.4   |
-| @vitejs/plugin-react           | 6.1.2   |
-| tailwindcss, @tailwindcss/vite | 4.3.3   |
-| react-router                   | 7.18.4  |
+| Tool                             | Version |
+| -------------------------------- | ------- |
+| Node.js                          | 24.22.0 |
+| npm                              | 12.2.0  |
+| eslint                           | 10.13.0 |
+| prettier                         | 3.9.10  |
+| react, react-dom                 | 19.2.9  |
+| vite                             | 8.3.4   |
+| @vitejs/plugin-react             | 6.1.2   |
+| tailwindcss, @tailwindcss/vite   | 4.3.3   |
+| react-router                     | 7.18.4  |
+| @reduxjs/toolkit (teaching only) | 2.13.0  |

@@ -1,23 +1,32 @@
-// "Register" button that asks for confirmation in a modal before reserving a seat.
+// Register / cancel controls for one event. A modal asks for confirmation before registering.
 import { useState } from 'react';
 import Button from './ui/Button.jsx';
 import Modal from './ui/Modal.jsx';
+import { useRegistrations } from '../context/RegistrationsContext.jsx';
 
 export default function RegisterForEvent({ event }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isRegistered, setIsRegistered] = useState(false);
+  const { dispatch, isRegistered } = useRegistrations();
   const isFull = event.capacity - event.seatsTaken <= 0;
 
   function confirm() {
-    setIsRegistered(true);
+    dispatch({ type: 'registered', event });
     setIsOpen(false);
   }
 
-  if (isRegistered) {
+  if (isRegistered(event.id)) {
     return (
-      <p role="status" className="font-semibold text-green-800 dark:text-green-300">
-        You are registered for {event.title}.
-      </p>
+      <div className="flex flex-wrap items-center gap-3">
+        <p role="status" className="font-semibold text-green-800 dark:text-green-300">
+          You are registered for {event.title}.
+        </p>
+        <Button
+          variant="secondary"
+          onClick={() => dispatch({ type: 'cancelled', eventId: event.id })}
+        >
+          Cancel registration
+        </Button>
+      </div>
     );
   }
 

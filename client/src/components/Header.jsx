@@ -27,7 +27,13 @@ export default function Header() {
                 Clubs
               </NavLink>
             </li>
-            {!user && (
+            {user ? (
+              <li>
+                <NavLink to="/me/registrations" className={linkClass}>
+                  My registrations
+                </NavLink>
+              </li>
+            ) : (
               <li>
                 <NavLink to="/register" className={linkClass}>
                   Register
