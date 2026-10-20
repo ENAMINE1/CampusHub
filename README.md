@@ -75,6 +75,7 @@ output directory is `dist`.
 | 48    | `v48-express`      | Express app: `GET /api/health`, `GET /api/events`; `app.js` / `server.js` split; `node --watch`; one `npm run dev` for both            |
 | 49    | `v49-rest-design`  | `docs/api-contract.md`: endpoints, auth levels, status codes, one error shape (docs only)                                              |
 | 50    | `v50-routing`      | `express.Router`, routes → controllers → services; events CRUD on an in-memory array with filters; `/api/v1`                           |
+| 51    | `v51-middleware`   | Request logger (morgan), helmet, CORS allowlist with credentials, 404 handler, four-argument error handler                             |
 
 ## Stack (exact installed versions)
 
@@ -97,3 +98,6 @@ output directory is `dist`.
 | jsdom                            | 30.1.3  |
 | express                          | 5.3.0   |
 | concurrently                     | 10.0.6  |
+| cors                             | 2.8.6   |
+| morgan                           | 1.12.1  |
+| helmet                           | 8.3.0   |
