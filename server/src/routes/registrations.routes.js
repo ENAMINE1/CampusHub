@@ -3,12 +3,23 @@
 import { Router } from 'express';
 import * as registrationsController from '../controllers/registrations.controller.js';
 import validate from '../middleware/validate.js';
+import requireAuth from '../middleware/requireAuth.js';
+import requireRole from '../middleware/requireRole.js';
+import requireEventOwner from '../middleware/requireEventOwner.js';
 import { eventIdParams } from '../validators/event.schemas.js';
 import { registrationBody } from '../validators/registration.schemas.js';
 
 const router = Router({ mergeParams: true });
 
-router.get('/', validate({ params: eventIdParams }), registrationsController.list);
+// Registrant names and emails are personal data: only the event's owners may see them.
+router.get(
+  '/',
+  requireAuth,
+  requireRole('clubAdmin', 'admin'),
+  validate({ params: eventIdParams }),
+  requireEventOwner,
+  registrationsController.list,
+);
 router.post(
   '/',
   validate({ params: eventIdParams, body: registrationBody }),

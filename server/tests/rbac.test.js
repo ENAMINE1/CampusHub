@@ -11,7 +11,8 @@ let clubAdmin;
 
 beforeAll(async () => {
   student = await authHeaderFor('student');
-  clubAdmin = await authHeaderFor('clubAdmin');
+  // Listed in data/clubs.json as an admin of code-club only.
+  clubAdmin = await authHeaderFor('clubAdmin', 'code.lead@campushub.dev');
 });
 
 describe('creating events', () => {
@@ -53,7 +54,7 @@ describe('creating events', () => {
     expect(res.body.error.code).toBe('FORBIDDEN');
   });
 
-  it('201 for a club admin', async () => {
+  it("201 for a club admin of the event's club", async () => {
     const res = await api
       .post('/api/v1/events')
       .set('Authorization', clubAdmin)
@@ -67,5 +68,63 @@ describe('GET /api/v1/auth/me', () => {
     const res = await api.get('/api/v1/auth/me').set('Authorization', student);
     expect(res.status).toBe(200);
     expect(res.body.user.role).toBe('student');
+  });
+});
+
+describe('ownership (FR-1.6)', () => {
+  async function codeClubEvent() {
+    const res = await api
+      .post('/api/v1/events')
+      .set('Authorization', clubAdmin)
+      .send(validEventBody({ club: 'code-club' }));
+    return `/api/v1/events/${res.body.id}`;
+  }
+
+  it('403 when a club admin creates an event for another club', async () => {
+    const res = await api
+      .post('/api/v1/events')
+      .set('Authorization', clubAdmin)
+      .send(validEventBody({ club: 'cultural-society' }));
+    expect(res.status).toBe(403);
+  });
+
+  it("403 when a club admin edits or deletes another club's event", async () => {
+    const url = await codeClubEvent();
+    const otherAdmin = await authHeaderFor('clubAdmin', 'culture.lead@campushub.dev');
+    expect(
+      (await api.patch(url).set('Authorization', otherAdmin).send({ title: 'Mine now' }))
+        .status,
+    ).toBe(403);
+    expect((await api.delete(url).set('Authorization', otherAdmin)).status).toBe(403);
+  });
+
+  it('403 when moving your event to a club you do not manage', async () => {
+    const url = await codeClubEvent();
+    const res = await api
+      .patch(url)
+      .set('Authorization', clubAdmin)
+      .send({ club: 'sports-council' });
+    expect(res.status).toBe(403);
+  });
+
+  it('admins may edit any event', async () => {
+    const url = await codeClubEvent();
+    const admin = await authHeaderFor('admin');
+    const res = await api
+      .patch(url)
+      .set('Authorization', admin)
+      .send({ title: 'Admin edit' });
+    expect(res.status).toBe(200);
+  });
+
+  it('only owners see the registrant list', async () => {
+    const url = await codeClubEvent();
+    expect((await api.get(`${url}/registrations`)).status).toBe(401);
+    expect(
+      (await api.get(`${url}/registrations`).set('Authorization', student)).status,
+    ).toBe(403);
+    expect(
+      (await api.get(`${url}/registrations`).set('Authorization', clubAdmin)).status,
+    ).toBe(200);
   });
 });

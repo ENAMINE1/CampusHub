@@ -1,5 +1,13 @@
 [
-  { "slug": "code-club", "name": "Code Club" },
-  { "slug": "cultural-society", "name": "Cultural Society" },
-  { "slug": "sports-council", "name": "Sports Council" }
+  {
+    "slug": "code-club",
+    "name": "Code Club",
+    "adminEmails": ["code.lead@campushub.dev"]
+  },
+  {
+    "slug": "cultural-society",
+    "name": "Cultural Society",
+    "adminEmails": ["culture.lead@campushub.dev"]
+  },
+  { "slug": "sports-council", "name": "Sports Council", "adminEmails": [] }
 ]

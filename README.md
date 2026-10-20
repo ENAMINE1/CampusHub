@@ -62,15 +62,29 @@ arrive in later videos) is in [docs/api-contract.md](docs/api-contract.md).
 | GET    | /api/v1/health                   | `{ status, uptime }`                                                                             |
 | GET    | /api/v1/events                   | List events. Query: `category`, `q` (title/description search), `when=upcoming` or `past`        |
 | GET    | /api/v1/events/:id               | One event with `seatsLeft`                                                                       |
-| POST   | /api/v1/events                   | Create an event (validated with Zod)                                                             |
-| PATCH  | /api/v1/events/:id               | Update some fields                                                                               |
-| DELETE | /api/v1/events/:id               | Delete an event                                                                                  |
+| POST   | /api/v1/events                   | Create an event (validated with Zod). **Owner**: admin, or club admin of that club               |
+| PATCH  | /api/v1/events/:id               | Update some fields. **Owner**                                                                    |
+| DELETE | /api/v1/events/:id               | Delete an event. **Owner**                                                                       |
 | POST   | /api/v1/events/:id/registrations | Register `{ name, email }`: 409 duplicate, 422 full or closed                                    |
-| GET    | /api/v1/events/:id/registrations | Registrant list                                                                                  |
+| GET    | /api/v1/events/:id/registrations | Registrant list. **Owner**                                                                       |
 | POST   | /api/v1/auth/register            | Sign up `{ name, email, password }`: returns `{ user, accessToken }` and sets the refresh cookie |
-| POST   | /api/v1/auth/login               | Log in: same response as register; one generic 401 for bad credentials                           |
+| POST   | /api/v1/auth/login               | Log in: same response as register; one generic 401; 5 attempts per 15 min per IP                 |
 | POST   | /api/v1/auth/refresh             | New access token from the refresh cookie (the cookie is rotated)                                 |
 | POST   | /api/v1/auth/logout              | Clears the cookie and forgets the stored token                                                   |
+| GET    | /api/v1/auth/me                  | The logged-in user. Needs `Authorization: Bearer <accessToken>`                                  |
+
+No token or a bad token gives **401**; a valid token without permission gives **403**.
+
+### Demo accounts (development only)
+
+Until the database arrives, users live in memory and vanish on restart. In development the API
+creates these on startup, all with the password `campushub-demo`. Never use them in production.
+
+| Email                      | Role                          |
+| -------------------------- | ----------------------------- |
+| admin@campushub.dev        | admin                         |
+| code.lead@campushub.dev    | clubAdmin of Code Club        |
+| culture.lead@campushub.dev | clubAdmin of Cultural Society |
 
 Every error uses one shape:
 
@@ -116,6 +130,7 @@ API tests (Vitest + Supertest) live in `server/tests` and run with `npm test`.
 | 54    | `v54-config`        | `dotenv` + `config/index.js` validates env vars at startup; `server/.env.example`, `client/.env.example`                                        |
 | 55    | `v55-api-tests`     | Supertest suites for events and registrations; root `npm test` runs both workspaces; README API section                                         |
 | 56    | `v56-auth`          | bcrypt (cost 12) sign-up/login with in-memory users; 15-min access token; 7-day httpOnly refresh cookie, hashed and rotated; refresh and logout |
+| 57    | `v57-rbac`          | `requireAuth`, `requireRole`, `requireEventOwner`; owner-only event changes and registrant list; login rate limit; 401 vs 403 tests             |
 
 ## Stack (exact installed versions)
 
@@ -147,3 +162,4 @@ API tests (Vitest + Supertest) live in `server/tests` and run with `npm test`.
 | bcrypt                           | 6.0.0   |
 | jsonwebtoken                     | 9.0.3   |
 | cookie-parser                    | 1.4.7   |
+| express-rate-limit               | 8.7.1   |

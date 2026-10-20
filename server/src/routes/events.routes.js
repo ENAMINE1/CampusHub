@@ -4,6 +4,7 @@ import * as eventsController from '../controllers/events.controller.js';
 import validate from '../middleware/validate.js';
 import requireAuth from '../middleware/requireAuth.js';
 import requireRole from '../middleware/requireRole.js';
+import requireEventOwner from '../middleware/requireEventOwner.js';
 import registrationsRouter from './registrations.routes.js';
 import {
   createEventSchema,
@@ -18,25 +19,29 @@ const router = Router();
 router.get('/', validate({ query: listEventsQuery }), eventsController.list);
 router.get('/:id', validate({ params: eventIdParams }), eventsController.getById);
 
-// Only staff may change them. The order matters: who are you (401), then are you allowed (403).
+// Only staff may change them, and only for their own clubs.
+// The order matters: who are you (401), are you staff (403), is the input valid (422), is it your club (403).
 const staffOnly = [requireAuth, requireRole('clubAdmin', 'admin')];
 
 router.post(
   '/',
   staffOnly,
   validate({ body: createEventSchema }),
+  requireEventOwner,
   eventsController.create,
 );
 router.patch(
   '/:id',
   staffOnly,
   validate({ params: eventIdParams, body: updateEventSchema }),
+  requireEventOwner,
   eventsController.update,
 );
 router.delete(
   '/:id',
   staffOnly,
   validate({ params: eventIdParams }),
+  requireEventOwner,
   eventsController.remove,
 );
 
