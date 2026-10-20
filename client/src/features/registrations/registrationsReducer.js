@@ -5,6 +5,15 @@ export const initialRegistrations = [];
 
 export function registrationsReducer(registrations, action) {
   switch (action.type) {
+    // The server's list replaces whatever we had (after login or a page reload).
+    case 'loaded':
+      return action.registrations.map(({ event }) => ({
+        eventId: event.id,
+        title: event.title,
+        startsAt: event.startsAt,
+        venue: event.venue,
+        status: 'registered',
+      }));
     case 'registered': {
       const existing = registrations.find((r) => r.eventId === action.event.id);
       // Registering again after cancelling flips the status back instead of adding a duplicate.

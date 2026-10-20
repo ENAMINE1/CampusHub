@@ -1,8 +1,7 @@
 // Register button for one event. A modal confirms, then the API decides: success, or an error
 // like EVENT_FULL / ALREADY_REGISTERED that we show to the user.
-// (Cancelling needs the server to know who you are, so it returns once login exists.)
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import Button from './ui/Button.jsx';
 import Modal from './ui/Modal.jsx';
 import { useRegistrations } from '../context/RegistrationsContext.jsx';
@@ -15,15 +14,14 @@ export default function RegisterForEvent({ event, onChange }) {
   const [error, setError] = useState('');
   const { dispatch, isRegistered } = useRegistrations();
   const { user } = useAuth();
+  const location = useLocation();
 
   async function confirm() {
     setIsSaving(true);
     setError('');
     try {
-      await apiFetch(`/events/${event.id}/registrations`, {
-        method: 'POST',
-        body: { name: user.name, email: user.email },
-      });
+      // No body: the server knows who you are from your access token.
+      await apiFetch(`/events/${event.id}/registrations`, { method: 'POST' });
       dispatch({ type: 'registered', event });
       onChange(); // reload the event so the seat count is fresh
     } catch (err) {
@@ -34,21 +32,27 @@ export default function RegisterForEvent({ event, onChange }) {
     }
   }
 
+  if (!user) {
+    return (
+      <Link
+        to="/login"
+        state={{ from: location.pathname }}
+        className="font-semibold text-brand-700 underline dark:text-brand-300"
+      >
+        Log in to register
+      </Link>
+    );
+  }
+  if (user.role !== 'student') {
+    return (
+      <p className="text-slate-600 dark:text-slate-400">Only students can register.</p>
+    );
+  }
   if (isRegistered(event.id)) {
     return (
       <p role="status" className="font-semibold text-green-800 dark:text-green-300">
         You are registered for {event.title}.
       </p>
-    );
-  }
-  if (!user) {
-    return (
-      <Link
-        to="/register"
-        className="font-semibold text-brand-700 underline dark:text-brand-300"
-      >
-        Create an account to register
-      </Link>
     );
   }
 

@@ -36,3 +36,24 @@ describe('registrationsReducer', () => {
     expect(() => registrationsReducer([], { type: 'registerd' })).toThrow(/Unknown/);
   });
 });
+
+describe('registrationsReducer loaded', () => {
+  it('replaces the list with the server data', () => {
+    const fromServer = [
+      { id: 'r1', registeredAt: '2026-10-20', event: { ...gitWorkshop } },
+    ];
+    const next = registrationsReducer([{ eventId: 'old', status: 'registered' }], {
+      type: 'loaded',
+      registrations: fromServer,
+    });
+    expect(next).toEqual([
+      {
+        eventId: 'evt-1',
+        title: 'Intro to Git Workshop',
+        startsAt: gitWorkshop.startsAt,
+        venue: 'Lab 2',
+        status: 'registered',
+      },
+    ]);
+  });
+});
