@@ -2,6 +2,7 @@
 import { Router } from 'express';
 import * as eventsController from '../controllers/events.controller.js';
 import validate from '../middleware/validate.js';
+import registrationsRouter from './registrations.routes.js';
 import {
   createEventSchema,
   eventIdParams,
@@ -20,5 +21,8 @@ router.patch(
   eventsController.update,
 );
 router.delete('/:id', validate({ params: eventIdParams }), eventsController.remove);
+
+// Nested resource: /api/v1/events/:id/registrations
+router.use('/:id/registrations', registrationsRouter);
 
 export default router;

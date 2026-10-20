@@ -76,6 +76,7 @@ output directory is `dist`.
 | 49    | `v49-rest-design`  | `docs/api-contract.md`: endpoints, auth levels, status codes, one error shape (docs only)                                              |
 | 50    | `v50-routing`      | `express.Router`, routes → controllers → services; events CRUD on an in-memory array with filters; `/api/v1`                           |
 | 51    | `v51-middleware`   | Request logger (morgan), helmet, CORS allowlist with credentials, 404 handler, four-argument error handler                             |
+| 52    | `v52-validation`   | Zod schemas + `validate` middleware, `ApiError`, one error shape; in-memory registrations (409 duplicate, 422 full or closed)          |
 
 ## Stack (exact installed versions)
 
@@ -101,3 +102,4 @@ output directory is `dist`.
 | cors                             | 2.8.6   |
 | morgan                           | 1.12.1  |
 | helmet                           | 8.3.0   |
+| zod                              | 4.6.7   |
