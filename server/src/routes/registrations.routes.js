@@ -28,4 +28,12 @@ router.post(
   registrationsController.create,
 );
 
+// Cancel your own registration. '/me' means 'the logged-in user', so nobody can cancel for others.
+router.delete(
+  '/me',
+  requireAuth,
+  validate({ params: eventIdParams }),
+  registrationsController.cancel,
+);
+
 export default router;

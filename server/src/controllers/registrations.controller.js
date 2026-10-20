@@ -12,3 +12,8 @@ export async function create(req, res) {
 export async function list(req, res) {
   res.json(await registrationsService.listRegistrants(req.validated.params.id));
 }
+
+export async function cancel(req, res) {
+  await registrationsService.cancelRegistration(req.validated.params.id, req.user);
+  res.status(204).end();
+}

@@ -3,6 +3,7 @@ import Event from '../models/Event.js';
 import Registration from '../models/Registration.js';
 import ApiError from '../utils/ApiError.js';
 import { clubExists } from './clubs.service.js';
+import { forgetEvent } from './favorites.service.js';
 import { findDateProblems } from '../validators/event.schemas.js';
 
 // Shape a database document for the API: `id` instead of `_id`, no `__v`, the club as a small
@@ -102,4 +103,5 @@ export async function deleteEvent(id) {
   if (!deleted) throw ApiError.notFound('Event not found.');
   // FR-2.4: registrations for a deleted event would point at nothing, so remove them too.
   await Registration.deleteMany({ event: id });
+  await forgetEvent(id);
 }

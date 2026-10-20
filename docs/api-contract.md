@@ -26,32 +26,33 @@ Missing or invalid token → **401 Unauthorized**. Valid token without permissio
 
 ## Endpoints
 
-| Method | Path                         | Auth           | Success | Notes                                                                |
-| ------ | ---------------------------- | -------------- | ------- | -------------------------------------------------------------------- |
-| GET    | /health                      | Public         | 200     | `{ status, uptime, db }`                                             |
-| POST   | /auth/register               | Public         | 201     | 409 duplicate email, 422 invalid body                                |
-| POST   | /auth/login                  | Public         | 200     | Sets refresh cookie; rate-limited to 5 per 15 min per IP             |
-| POST   | /auth/refresh                | Cookie         | 200     | New access token                                                     |
-| POST   | /auth/logout                 | Auth           | 204     | Clears cookie                                                        |
-| GET    | /auth/me                     | Auth           | 200     | Current user                                                         |
-| GET    | /events                      | Public         | 200     | Query: `page, limit, sort, category, club, q, when=upcoming or past` |
-| GET    | /events/:id                  | Public         | 200     | Club populated, `seatsLeft`                                          |
-| POST   | /events                      | Owner          | 201     | Body validated with Zod                                              |
-| PATCH  | /events/:id                  | Owner          | 200     | Partial update                                                       |
-| DELETE | /events/:id                  | Owner          | 204     | Cascades registrations                                               |
-| POST   | /events/:id/poster           | Owner          | 200     | multipart field `poster`                                             |
-| POST   | /events/:id/registrations    | Auth (student) | 201     | 409 duplicate, 422 full or past deadline                             |
-| DELETE | /events/:id/registrations/me | Auth           | 204     | Cancel own registration                                              |
-| GET    | /events/:id/registrations    | Owner          | 200     | Registrant list                                                      |
-| GET    | /me/registrations            | Auth           | 200     | Query `when=upcoming or past`                                        |
-| GET    | /me/favorites                | Auth           | 200     | Populated events                                                     |
-| PUT    | /me/favorites/:eventId       | Auth           | 204     | Idempotent add                                                       |
-| DELETE | /me/favorites/:eventId       | Auth           | 204     | Idempotent remove                                                    |
-| GET    | /clubs                       | Public         | 200     |                                                                      |
-| GET    | /clubs/:slug                 | Public         | 200     | With upcoming events                                                 |
-| POST   | /clubs                       | Admin          | 201     |                                                                      |
-| PATCH  | /clubs/:id                   | Admin          | 200     | Includes `adminEmails`                                               |
-| GET    | /admin/stats                 | Admin          | 200     | Registrations per event and per category                             |
+| Method | Path                         | Auth              | Success | Notes                                                                                               |
+| ------ | ---------------------------- | ----------------- | ------- | --------------------------------------------------------------------------------------------------- |
+| GET    | /health                      | Public            | 200     | `{ status, uptime, db }`                                                                            |
+| POST   | /auth/register               | Public            | 201     | 409 duplicate email, 422 invalid body                                                               |
+| POST   | /auth/login                  | Public            | 200     | Sets refresh cookie; rate-limited to 5 per 15 min per IP                                            |
+| POST   | /auth/refresh                | Cookie            | 200     | New access token                                                                                    |
+| POST   | /auth/logout                 | Auth              | 204     | Clears cookie                                                                                       |
+| GET    | /auth/me                     | Auth              | 200     | Current user                                                                                        |
+| GET    | /events                      | Public            | 200     | Query: `page, limit, sort, category, club, q, when=upcoming or past`                                |
+| GET    | /events/:id                  | Public            | 200     | Club populated, `seatsLeft`                                                                         |
+| POST   | /events                      | Owner             | 201     | Body validated with Zod                                                                             |
+| PATCH  | /events/:id                  | Owner             | 200     | Partial update                                                                                      |
+| DELETE | /events/:id                  | Owner             | 204     | Cascades registrations                                                                              |
+| POST   | /events/:id/poster           | Owner             | 200     | multipart field `poster`                                                                            |
+| POST   | /events/:id/registrations    | Auth (student)    | 201     | 409 duplicate, 422 full or past deadline                                                            |
+| DELETE | /events/:id/registrations/me | Auth              | 204     | Cancel own registration                                                                             |
+| GET    | /events/:id/registrations    | Owner             | 200     | Registrant list                                                                                     |
+| GET    | /me/registrations            | Auth              | 200     | Query `when=upcoming or past`                                                                       |
+| GET    | /me/favorites                | Auth              | 200     | Populated events                                                                                    |
+| PUT    | /me/favorites/:eventId       | Auth              | 204     | Idempotent add                                                                                      |
+| DELETE | /me/favorites/:eventId       | Auth              | 204     | Idempotent remove                                                                                   |
+| GET    | /me/clubs                    | Club admin, Admin | 200     | Clubs I manage (all clubs for an admin). Added in Video 64 for the dashboard; not in the SPEC table |
+| GET    | /clubs                       | Public            | 200     |                                                                                                     |
+| GET    | /clubs/:slug                 | Public            | 200     | With upcoming events                                                                                |
+| POST   | /clubs                       | Admin             | 201     |                                                                                                     |
+| PATCH  | /clubs/:id                   | Admin             | 200     | Includes `adminEmails`                                                                              |
+| GET    | /admin/stats                 | Admin             | 200     | Registrations per event and per category                                                            |
 
 ### `GET /events` query parameters
 

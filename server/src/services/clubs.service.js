@@ -39,3 +39,9 @@ export async function canManageClub(user, clubId) {
   if (user.role !== 'clubAdmin') return false;
   return Boolean(await Club.exists({ _id: clubId, admins: user._id }));
 }
+
+export async function listManagedClubs(user) {
+  const filter = user.role === 'admin' ? {} : { admins: user._id };
+  const clubs = await Club.find(filter).sort({ name: 1 }).lean();
+  return clubs.map(toClub);
+}
