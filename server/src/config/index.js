@@ -1,0 +1,37 @@
+// Loads server/.env and checks every setting once, at startup. If something is missing or wrong,
+// the server refuses to start with a clear message, instead of failing later in a confusing way.
+// Everything else imports settings from here instead of reading process.env directly.
+import path from 'node:path';
+import dotenv from 'dotenv';
+import * as z from 'zod';
+
+// Real environment variables (set by the host in production) win over the .env file.
+dotenv.config({ path: path.join(import.meta.dirname, '..', '..', '.env'), quiet: true });
+
+const envSchema = z.object({
+  NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+  PORT: z.coerce.number().int().min(1).max(65535).default(3000),
+  CLIENT_URL: z.url().default('http://localhost:5173'),
+});
+
+const result = envSchema.safeParse(process.env);
+
+if (!result.success) {
+  console.error(
+    'Invalid environment variables. Check server/.env against server/.env.example:',
+  );
+  for (const issue of result.error.issues) {
+    console.error(`  ${issue.path.join('.')}: ${issue.message}`);
+  }
+  process.exit(1);
+}
+
+const config = {
+  env: result.data.NODE_ENV,
+  isProduction: result.data.NODE_ENV === 'production',
+  isTest: result.data.NODE_ENV === 'test',
+  port: result.data.PORT,
+  clientUrl: result.data.CLIENT_URL,
+};
+
+export default config;

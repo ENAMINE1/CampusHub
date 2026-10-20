@@ -78,6 +78,7 @@ output directory is `dist`.
 | 51    | `v51-middleware`    | Request logger (morgan), helmet, CORS allowlist with credentials, 404 handler, four-argument error handler                             |
 | 52    | `v52-validation`    | Zod schemas + `validate` middleware, `ApiError`, one error shape; in-memory registrations (409 duplicate, 422 full or closed)          |
 | 53    | `v53-react-express` | React calls the API through `api/client.js` (`ApiError`), Vite proxy for `/api`, `VITE_API_URL`, API errors shown in the UI            |
+| 54    | `v54-config`        | `dotenv` + `config/index.js` validates env vars at startup; `server/.env.example`, `client/.env.example`                               |
 
 ## Stack (exact installed versions)
 
@@ -104,3 +105,4 @@ output directory is `dist`.
 | morgan                           | 1.12.1  |
 | helmet                           | 8.3.0   |
 | zod                              | 4.6.7   |
+| dotenv                           | 18.0.8  |
