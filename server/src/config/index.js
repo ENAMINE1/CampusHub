@@ -18,6 +18,12 @@ const envSchema = z.object({
   // Where uploaded posters go: 'local' disk (development) or 'object' storage (see storage/objectStorage.js).
   STORAGE_DRIVER: z.enum(['local', 'object']).default('local'),
   UPLOAD_DIR: z.string().default('uploads'),
+  // Email. Leave SMTP_HOST empty in development: messages are built but not sent.
+  SMTP_HOST: z.string().optional(),
+  SMTP_PORT: z.coerce.number().int().default(587),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASS: z.string().optional(),
+  EMAIL_FROM: z.string().default('CampusHub <no-reply@campushub.dev>'),
   // Long random strings. Anyone who knows a secret can forge login tokens, so keep them out of git.
   JWT_ACCESS_SECRET: z.string().min(32, 'must be at least 32 characters'),
   JWT_REFRESH_SECRET: z.string().min(32, 'must be at least 32 characters'),
@@ -47,6 +53,13 @@ const config = {
   storageDriver: result.data.STORAGE_DRIVER,
   // A relative UPLOAD_DIR is resolved from the server folder, wherever you start the app from.
   uploadDir: path.resolve(serverDir, result.data.UPLOAD_DIR),
+  smtp: {
+    host: result.data.SMTP_HOST,
+    port: result.data.SMTP_PORT,
+    user: result.data.SMTP_USER,
+    pass: result.data.SMTP_PASS,
+  },
+  emailFrom: result.data.EMAIL_FROM,
   jwt: {
     accessSecret: result.data.JWT_ACCESS_SECRET,
     refreshSecret: result.data.JWT_REFRESH_SECRET,

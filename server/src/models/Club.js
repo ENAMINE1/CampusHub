@@ -1,6 +1,7 @@
 // The Club model. Events point to a club by its _id (a reference) instead of copying its name,
 // so renaming a club updates every event at once.
 import mongoose from 'mongoose';
+import toJSONOptions from '../utils/toJSONOptions.js';
 
 const clubSchema = new mongoose.Schema(
   {
@@ -26,5 +27,7 @@ const clubSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
+
+clubSchema.set('toJSON', toJSONOptions);
 
 export default mongoose.model('Club', clubSchema);

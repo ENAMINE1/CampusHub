@@ -1,6 +1,7 @@
 // The Registration model: which user registered for which event. Its own collection, because
 // it links two others (many students, many events) and carries its own data (status, reminder).
 import mongoose from 'mongoose';
+import toJSONOptions from '../utils/toJSONOptions.js';
 
 const registrationSchema = new mongoose.Schema(
   {
@@ -17,5 +18,7 @@ const registrationSchema = new mongoose.Schema(
 registrationSchema.index({ event: 1, user: 1 }, { unique: true });
 // "My registrations, newest first" reads by user.
 registrationSchema.index({ user: 1, createdAt: -1 });
+
+registrationSchema.set('toJSON', toJSONOptions);
 
 export default mongoose.model('Registration', registrationSchema);

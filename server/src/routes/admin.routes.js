@@ -2,10 +2,11 @@
 import { Router } from 'express';
 import * as adminController from '../controllers/admin.controller.js';
 import requireAuth from '../middleware/requireAuth.js';
+import { noStore } from '../middleware/cacheControl.js';
 import requireRole from '../middleware/requireRole.js';
 
 const router = Router();
-router.use(requireAuth, requireRole('admin'));
+router.use(noStore, requireAuth, requireRole('admin'));
 
 router.get('/stats', adminController.stats);
 

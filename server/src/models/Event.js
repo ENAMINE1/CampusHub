@@ -1,6 +1,7 @@
 // The Event model: the shape of an event document and the rules MongoDB data must follow.
 // Zod checks requests at the door; these validators protect the database from any other code path.
 import mongoose from 'mongoose';
+import toJSONOptions from '../utils/toJSONOptions.js';
 import { CATEGORIES } from '../validators/event.schemas.js';
 
 const eventSchema = new mongoose.Schema(
@@ -37,5 +38,7 @@ eventSchema.index({ startsAt: 1 }); // upcoming/past, default sort
 eventSchema.index({ category: 1, startsAt: 1 }); // filter by category, sorted by date
 eventSchema.index({ club: 1, startsAt: 1 }); // a club's events, sorted by date
 eventSchema.index({ title: 'text', description: 'text' }); // ?q= word search
+
+eventSchema.set('toJSON', toJSONOptions);
 
 export default mongoose.model('Event', eventSchema);

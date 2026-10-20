@@ -37,16 +37,18 @@ with a single `package-lock.json`.
 
 Then edit `server/.env`:
 
-| Variable                                  | What it is                                                                                                                        |
-| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `NODE_ENV`                                | `development` on your laptop, `production` on a server                                                                            |
-| `PORT`                                    | Port the API listens on (3000)                                                                                                    |
-| `CLIENT_URL`                              | The React app's address; the only origin CORS allows (http://localhost:5173)                                                      |
-| `MONGODB_URI`                             | MongoDB connection string, including the database name `campushub`                                                                |
-| `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET` | Two different random strings of 32+ characters that sign login tokens                                                             |
-| `ACCESS_TOKEN_TTL`, `REFRESH_TOKEN_TTL`   | Token lifetimes (`15m` and `7d`)                                                                                                  |
-| `STORAGE_DRIVER`                          | Where posters go: `local` disk (development) or `object` storage (production, see `server/src/services/storage/objectStorage.js`) |
-| `UPLOAD_DIR`                              | Folder for local uploads, relative to `server/` (`uploads`, git-ignored)                                                          |
+| Variable                                           | What it is                                                                                                                                |
+| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `NODE_ENV`                                         | `development` on your laptop, `production` on a server                                                                                    |
+| `PORT`                                             | Port the API listens on (3000)                                                                                                            |
+| `CLIENT_URL`                                       | The React app's address; the only origin CORS allows (http://localhost:5173)                                                              |
+| `MONGODB_URI`                                      | MongoDB connection string, including the database name `campushub`                                                                        |
+| `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`          | Two different random strings of 32+ characters that sign login tokens                                                                     |
+| `ACCESS_TOKEN_TTL`, `REFRESH_TOKEN_TTL`            | Token lifetimes (`15m` and `7d`)                                                                                                          |
+| `STORAGE_DRIVER`                                   | Where posters go: `local` disk (development) or `object` storage (production, see `server/src/services/storage/objectStorage.js`)         |
+| `UPLOAD_DIR`                                       | Folder for local uploads, relative to `server/` (`uploads`, git-ignored)                                                                  |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` | Mail server for reminder emails. Leave `SMTP_HOST` empty in development (nothing is sent); use a free Ethereal inbox to see real messages |
+| `EMAIL_FROM`                                       | Sender shown on reminder emails                                                                                                           |
 
 Generate a secret with `node -e "console.log(crypto.randomBytes(32).toString('hex'))"`.
 
@@ -180,6 +182,7 @@ API tests (Vitest + Supertest) live in `server/tests` and run with `npm test`.
 | 63    | `v63-auth-fullstack`       | React login/register pages, real `AuthContext` with silent refresh, `ProtectedRoute`, logout, refresh-and-retry in `api/client.js`; registrations loaded from the server |
 | 64    | `v64-crud-roles`           | Atomic register and cancel, club-admin dashboard (create/edit/delete events, registrant list), role-based nav, server favorites with guest merge                         |
 | 65    | `v65-uploads-realtime`     | Poster upload (multer, 2 MB, MIME + extension, storage adapter); Socket.IO room per event with a live seats badge and fetch fallback                                     |
+| 66    | `v66-caching-jobs`         | `Cache-Control` (public lists 60 s, personal no-store); reminder job every 15 min with a unit test; `toJSON` transforms strip secrets                                    |
 
 ## Stack (exact installed versions)
 
@@ -216,3 +219,5 @@ API tests (Vitest + Supertest) live in `server/tests` and run with `npm test`.
 | mongodb-memory-server            | 11.3.0  |
 | multer                           | 2.4.0   |
 | socket.io, socket.io-client      | 4.8.4   |
+| node-cron                        | 4.6.0   |
+| nodemailer                       | 10.1.7  |

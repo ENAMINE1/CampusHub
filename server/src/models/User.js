@@ -1,6 +1,7 @@
 // The User model. Secrets are marked select: false, so normal queries never load them;
 // code that really needs them (login) must ask with .select('+passwordHash').
 import mongoose from 'mongoose';
+import toJSONOptions from '../utils/toJSONOptions.js';
 
 export const ROLES = ['student', 'clubAdmin', 'admin'];
 
@@ -15,5 +16,7 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
+
+userSchema.set('toJSON', toJSONOptions);
 
 export default mongoose.model('User', userSchema);

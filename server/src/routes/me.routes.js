@@ -4,6 +4,7 @@ import * as z from 'zod';
 import * as meController from '../controllers/me.controller.js';
 import validate from '../middleware/validate.js';
 import requireAuth from '../middleware/requireAuth.js';
+import { noStore } from '../middleware/cacheControl.js';
 import requireRole from '../middleware/requireRole.js';
 import { whenQuery } from '../validators/common.schemas.js';
 import { objectId } from '../validators/event.schemas.js';
@@ -11,7 +12,7 @@ import { objectId } from '../validators/event.schemas.js';
 const favoriteParams = z.strictObject({ eventId: objectId });
 
 const router = Router();
-router.use(requireAuth);
+router.use(noStore, requireAuth); // personal data: never cached
 
 router.get(
   '/registrations',

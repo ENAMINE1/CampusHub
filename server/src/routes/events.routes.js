@@ -6,6 +6,7 @@ import requireAuth from '../middleware/requireAuth.js';
 import requireRole from '../middleware/requireRole.js';
 import requireEventOwner from '../middleware/requireEventOwner.js';
 import uploadPoster from '../middleware/uploadPoster.js';
+import { publicFor } from '../middleware/cacheControl.js';
 import registrationsRouter from './registrations.routes.js';
 import {
   createEventSchema,
@@ -17,7 +18,12 @@ import {
 const router = Router();
 
 // Anyone can read events.
-router.get('/', validate({ query: listEventsQuery }), eventsController.list);
+router.get(
+  '/',
+  publicFor(60),
+  validate({ query: listEventsQuery }),
+  eventsController.list,
+);
 router.get('/:id', validate({ params: eventIdParams }), eventsController.getById);
 
 // Only staff may change them, and only for their own clubs.
