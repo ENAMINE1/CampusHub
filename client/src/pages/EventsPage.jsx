@@ -7,7 +7,6 @@ import useFetch from '../hooks/useFetch.js';
 import Spinner from '../components/ui/Spinner.jsx';
 import ErrorState from '../components/ui/ErrorState.jsx';
 import useDebounce from '../hooks/useDebounce.js';
-import useLocalStorage from '../hooks/useLocalStorage.js';
 
 export default function EventsPage() {
   const { data, isLoading, error } = useFetch('/data/events.json');
@@ -16,7 +15,6 @@ export default function EventsPage() {
   const search = searchParams.get('q') ?? '';
   const category = searchParams.get('category') ?? '';
   const debouncedSearch = useDebounce(search, 300);
-  const [favorites, setFavorites] = useLocalStorage('campushub:favorites', []);
 
   function updateParam(name, value) {
     const next = new URLSearchParams(searchParams);
@@ -37,12 +35,6 @@ export default function EventsPage() {
     document.title = `CampusHub · ${visibleEvents.length} events`;
   }, [visibleEvents.length]);
 
-  function toggleFavorite(id) {
-    setFavorites((current) =>
-      current.includes(id) ? current.filter((favId) => favId !== id) : [...current, id],
-    );
-  }
-
   return (
     <>
       <h1 className="mb-6 text-3xl font-bold text-slate-900 dark:text-slate-100">
@@ -56,13 +48,7 @@ export default function EventsPage() {
       />
       {isLoading && <Spinner label="Loading events…" />}
       {error && <ErrorState message={error} />}
-      {data && (
-        <EventList
-          events={visibleEvents}
-          favorites={favorites}
-          onToggleFavorite={toggleFavorite}
-        />
-      )}
+      {data && <EventList events={visibleEvents} />}
     </>
   );
 }

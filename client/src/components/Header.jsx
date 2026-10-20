@@ -1,11 +1,14 @@
-// Site header: logo link and the main navigation. NavLink highlights the page you are on.
+// Site header: logo link, main navigation, theme toggle and who is signed in.
 import { Link, NavLink } from 'react-router';
 import ThemeToggle from './ThemeToggle.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 
 const linkClass = ({ isActive }) =>
   `rounded px-2 py-1 hover:underline ${isActive ? 'bg-white/20 underline' : ''}`;
 
 export default function Header() {
+  const { user, logout } = useAuth();
+
   return (
     <header className="bg-brand-700 text-white">
       <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2 px-4 py-4">
@@ -24,14 +27,30 @@ export default function Header() {
                 Clubs
               </NavLink>
             </li>
-            <li>
-              <NavLink to="/register" className={linkClass}>
-                Register
-              </NavLink>
-            </li>
+            {!user && (
+              <li>
+                <NavLink to="/register" className={linkClass}>
+                  Register
+                </NavLink>
+              </li>
+            )}
           </ul>
         </nav>
-        <ThemeToggle />
+        <div className="flex items-center gap-2 text-sm">
+          {user && (
+            <>
+              <span>Hi, {user.name}</span>
+              <button
+                type="button"
+                onClick={logout}
+                className="rounded px-2 py-1 font-medium hover:bg-white/20"
+              >
+                Log out
+              </button>
+            </>
+          )}
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   );

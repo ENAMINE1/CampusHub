@@ -3,13 +3,14 @@ import { useState } from 'react';
 import Input from './ui/Input.jsx';
 import Button from './ui/Button.jsx';
 import validateRegistration from '../utils/validateRegistration.js';
+import { useAuth } from '../context/AuthContext.jsx';
 
 const emptyForm = { name: '', email: '', password: '' };
 
 export default function RegistrationForm() {
   const [values, setValues] = useState(emptyForm);
   const [touched, setTouched] = useState({});
-  const [submittedName, setSubmittedName] = useState('');
+  const { user, login } = useAuth();
 
   // Errors are derived from the values, so they can never disagree with what is typed.
   const errors = validateRegistration(values);
@@ -26,7 +27,8 @@ export default function RegistrationForm() {
     e.preventDefault();
     setTouched({ name: true, email: true, password: true });
     if (Object.keys(errors).length > 0) return;
-    setSubmittedName(values.name.trim());
+    // No server yet: signing in just stores the user in AuthContext.
+    login({ name: values.name.trim(), email: values.email.trim() });
     setValues(emptyForm);
     setTouched({});
   }
@@ -69,9 +71,9 @@ export default function RegistrationForm() {
         error={visibleError('password')}
       />
       <Button type="submit">Create account</Button>
-      {submittedName && (
+      {user && (
         <p role="status" className="text-green-800 dark:text-green-300">
-          Thanks, {submittedName}! Your account form is valid.
+          Welcome, {user.name}! You are signed in.
         </p>
       )}
     </form>

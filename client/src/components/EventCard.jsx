@@ -5,7 +5,7 @@ import FavoriteButton from './FavoriteButton.jsx';
 import Card from './ui/Card.jsx';
 import Badge from './ui/Badge.jsx';
 
-export default function EventCard({ event, isFavorite, onToggleFavorite }) {
+export default function EventCard({ event }) {
   // seatsLeft is calculated from the data, never stored separately.
   const seatsLeft = event.capacity - event.seatsTaken;
 
@@ -18,11 +18,7 @@ export default function EventCard({ event, isFavorite, onToggleFavorite }) {
             {event.club.name}
           </span>
         </div>
-        <FavoriteButton
-          isFavorite={isFavorite}
-          onToggle={() => onToggleFavorite(event.id)}
-          title={event.title}
-        />
+        <FavoriteButton eventId={event.id} title={event.title} />
       </div>
       <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
         <Link to={`/events/${event.id}`} className="hover:underline">

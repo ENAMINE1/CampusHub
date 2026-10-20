@@ -49,6 +49,7 @@ The React app opens at http://localhost:5173.
 | 38    | `v38-custom-hooks` | `useFetch`, `useDebounce`, `useLocalStorage` hooks; favorites survive a reload                                                         |
 | 39    | `v39-routing`      | React Router layout with `Outlet` and `NavLink`; Home, Events, Event details, Clubs, Register, NotFound; filters in the URL            |
 | 40    | `v40-ui-kit`       | `components/ui` (Button, Input, Select, Card, Badge, Spinner, ErrorState, EmptyState, Modal with focus trap and Esc); pages refactored |
+| 41    | `v41-context`      | `ThemeContext` (dark mode), `FavoritesContext` (no more prop drilling), in-memory `AuthContext`                                        |
 
 ## Stack (exact installed versions)
 

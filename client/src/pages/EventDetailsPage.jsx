@@ -6,6 +6,7 @@ import ErrorState from '../components/ui/ErrorState.jsx';
 import Card from '../components/ui/Card.jsx';
 import Badge from '../components/ui/Badge.jsx';
 import RegisterForEvent from '../components/RegisterForEvent.jsx';
+import FavoriteButton from '../components/FavoriteButton.jsx';
 import formatDate from '../utils/formatDate.js';
 
 export default function EventDetailsPage() {
@@ -46,6 +47,9 @@ export default function EventDetailsPage() {
         <Badge>{event.category}</Badge>
         <span className="text-sm text-slate-600 dark:text-slate-400">
           {event.club.name}
+        </span>
+        <span className="ml-auto">
+          <FavoriteButton eventId={event.id} title={event.title} />
         </span>
       </div>
       <h1 className="mt-2 text-3xl font-bold text-slate-900 dark:text-slate-100">
