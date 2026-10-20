@@ -71,6 +71,7 @@ output directory is `dist`.
 | 44    | `v44-react-tests`  | Vitest + React Testing Library: EventCard, search filter, registration form, reducer, error boundary                                   |
 | 45    | `v45-campushub-v2` | `build`/`preview` scripts, Vercel SPA rewrite, README run section (CampusHub v2: the React app)                                        |
 | 46    | `v46-node-npm`     | `server/` package with a first Node script; npm workspaces with one root lockfile                                                      |
+| 47    | `v47-core-modules` | `server/scripts/report.js` reads `events.json` with `fs/promises` and `path`, writes a summary report                                  |
 
 ## Stack (exact installed versions)
 
