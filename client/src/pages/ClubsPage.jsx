@@ -5,7 +5,7 @@ import ErrorState from '../components/ui/ErrorState.jsx';
 import Card from '../components/ui/Card.jsx';
 
 export default function ClubsPage() {
-  const { data, isLoading, error } = useFetch('/data/events.json');
+  const { data, isLoading, error } = useFetch('/events');
 
   // Count events per club, keyed by slug so each club appears once.
   const clubs = {};

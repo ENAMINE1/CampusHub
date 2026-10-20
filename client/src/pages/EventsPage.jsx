@@ -10,7 +10,7 @@ import useDebounce from '../hooks/useDebounce.js';
 import filterEvents from '../utils/filterEvents.js';
 
 export default function EventsPage() {
-  const { data, isLoading, error } = useFetch('/data/events.json');
+  const { data, isLoading, error } = useFetch('/events');
   // The filters live in the URL (?q=git&category=tech), so a filtered view can be bookmarked or shared.
   const [searchParams, setSearchParams] = useSearchParams();
   const search = searchParams.get('q') ?? '';

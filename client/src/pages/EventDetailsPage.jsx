@@ -11,29 +11,15 @@ import formatDate from '../utils/formatDate.js';
 
 export default function EventDetailsPage() {
   const { id } = useParams();
-  const { data, isLoading, error } = useFetch('/data/events.json');
+  const { data, error, reload } = useFetch(`/events/${id}`);
+  // Only trust data that belongs to this id: right after navigating, data may still hold the
+  // previous event. While reloading the same event (after registering) we keep showing it.
+  const event = data?.id === id ? data : null;
 
-  if (isLoading) return <Spinner label="Loading event…" />;
   if (error) return <ErrorState message={error} />;
+  if (!event) return <Spinner label="Loading event…" />;
 
-  const event = data.find((item) => item.id === id);
-  if (!event) {
-    return (
-      <div className="py-16 text-center">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-          Event not found
-        </h1>
-        <Link
-          to="/events"
-          className="mt-4 inline-block font-semibold text-brand-700 dark:text-brand-300 underline"
-        >
-          Back to all events
-        </Link>
-      </div>
-    );
-  }
-
-  const seatsLeft = event.capacity - event.seatsTaken;
+  const { seatsLeft } = event;
 
   return (
     <Card className="p-8">
@@ -79,7 +65,7 @@ export default function EventDetailsPage() {
           ? `${seatsLeft} of ${event.capacity} seats left`
           : 'This event is full'}
       </p>
-      <RegisterForEvent event={event} />
+      <RegisterForEvent event={event} onChange={reload} />
     </Card>
   );
 }

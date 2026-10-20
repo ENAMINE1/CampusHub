@@ -6,7 +6,7 @@ import Spinner from '../components/ui/Spinner.jsx';
 import ErrorState from '../components/ui/ErrorState.jsx';
 
 export default function HomePage() {
-  const { data, isLoading, error } = useFetch('/data/events.json');
+  const { data, isLoading, error } = useFetch('/events');
 
   // Copy before sorting: sort() changes the array in place, and `data` belongs to the hook.
   const nextEvents = [...(data ?? [])]
