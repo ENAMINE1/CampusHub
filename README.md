@@ -35,6 +35,8 @@ npm run dev
 
 The React app opens at http://localhost:5173.
 
+Run the tests from the repo root with `npm test` (Vitest + React Testing Library, in `client/src/test`).
+
 ## Course map
 
 | Video | Tag                | What it added                                                                                                                          |
@@ -52,6 +54,7 @@ The React app opens at http://localhost:5173.
 | 41    | `v41-context`      | `ThemeContext` (dark mode), `FavoritesContext` (no more prop drilling), in-memory `AuthContext`                                        |
 | 42    | `v42-reducer`      | Registrations with `useReducer` and a My registrations page; `redux-comparison/registrationsSlice.js` (teaching only)                  |
 | 43    | `v43-performance`  | `ErrorBoundary` around pages, one justified `useMemo`, lazy-loaded My registrations route with `Suspense`                              |
+| 44    | `v44-react-tests`  | Vitest + React Testing Library: EventCard, search filter, registration form, reducer, error boundary                                   |
 
 ## Stack (exact installed versions)
 
@@ -67,3 +70,8 @@ The React app opens at http://localhost:5173.
 | tailwindcss, @tailwindcss/vite   | 4.3.3   |
 | react-router                     | 7.18.4  |
 | @reduxjs/toolkit (teaching only) | 2.13.0  |
+| vitest                           | 5.0.5   |
+| @testing-library/react           | 16.3.3  |
+| @testing-library/user-event      | 14.6.8  |
+| @testing-library/jest-dom        | 7.0.1   |
+| jsdom                            | 30.1.3  |

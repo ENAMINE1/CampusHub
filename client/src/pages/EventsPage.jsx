@@ -7,6 +7,7 @@ import useFetch from '../hooks/useFetch.js';
 import Spinner from '../components/ui/Spinner.jsx';
 import ErrorState from '../components/ui/ErrorState.jsx';
 import useDebounce from '../hooks/useDebounce.js';
+import filterEvents from '../utils/filterEvents.js';
 
 export default function EventsPage() {
   const { data, isLoading, error } = useFetch('/data/events.json');
@@ -28,14 +29,10 @@ export default function EventsPage() {
   // but the list only changes when the debounced text, category or data change. useMemo skips
   // re-filtering on the in-between renders. With 8 events it hardly matters; with thousands it does.
   // Measure before reaching for useMemo elsewhere.
-  const visibleEvents = useMemo(() => {
-    const query = debouncedSearch.trim().toLowerCase();
-    return (data ?? []).filter(
-      (event) =>
-        event.title.toLowerCase().includes(query) &&
-        (category === '' || event.category === category),
-    );
-  }, [data, debouncedSearch, category]);
+  const visibleEvents = useMemo(
+    () => filterEvents(data ?? [], debouncedSearch, category),
+    [data, debouncedSearch, category],
+  );
 
   useEffect(() => {
     document.title = `CampusHub · ${visibleEvents.length} events`;
