@@ -1,7 +1,8 @@
 // Root component: page layout with header, main content and footer.
 import Header from './components/Header.jsx';
 import Footer from './components/Footer.jsx';
-import EventCard from './components/EventCard.jsx';
+import EventList from './components/EventList.jsx';
+import events from './data/events.js';
 
 export default function App() {
   return (
@@ -9,7 +10,7 @@ export default function App() {
       <Header />
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
         <h1 className="mb-6 text-3xl font-bold text-slate-900">Upcoming events</h1>
-        <EventCard />
+        <EventList events={events} />
       </main>
       <Footer />
     </div>
