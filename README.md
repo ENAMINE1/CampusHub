@@ -39,7 +39,7 @@ All commands run from the repo root.
 | Command                              | What it does                                                                                            |
 | ------------------------------------ | ------------------------------------------------------------------------------------------------------- |
 | `npm run dev`                        | Starts both apps: Vite at http://localhost:5173 and the API at http://localhost:3000 (restarts on save) |
-| `npm test`                           | Every workspace's tests (Vitest + React Testing Library in `client/src/test`)                           |
+| `npm test`                           | Every workspace's tests: client (Vitest + RTL) and server (Vitest + Supertest)                          |
 | `npm run lint`                       | ESLint over the whole repo                                                                              |
 | `npm run build`                      | Production build into `client/dist`                                                                     |
 | `npm run preview --workspace client` | Serves `client/dist` at http://localhost:4173 to check the build                                        |
@@ -50,6 +50,37 @@ All commands run from the repo root.
 browser, so without this rule a refresh on `/events/evt-101` would return a 404 from the host.
 On Vercel, set the project root to `client/`; the build command is `npm run build` and the
 output directory is `dist`.
+
+## API
+
+The Express API lives in `server/` and listens on http://localhost:3000. In development the React
+app reaches it through the Vite proxy at `/api/v1`. The full contract (including endpoints that
+arrive in later videos) is in [docs/api-contract.md](docs/api-contract.md).
+
+| Method | Path                             | What it does                                                                              |
+| ------ | -------------------------------- | ----------------------------------------------------------------------------------------- |
+| GET    | /api/v1/health                   | `{ status, uptime }`                                                                      |
+| GET    | /api/v1/events                   | List events. Query: `category`, `q` (title/description search), `when=upcoming` or `past` |
+| GET    | /api/v1/events/:id               | One event with `seatsLeft`                                                                |
+| POST   | /api/v1/events                   | Create an event (validated with Zod)                                                      |
+| PATCH  | /api/v1/events/:id               | Update some fields                                                                        |
+| DELETE | /api/v1/events/:id               | Delete an event                                                                           |
+| POST   | /api/v1/events/:id/registrations | Register `{ name, email }`: 409 duplicate, 422 full or closed                             |
+| GET    | /api/v1/events/:id/registrations | Registrant list                                                                           |
+
+Every error uses one shape:
+
+```json
+{ "error": { "code": "EVENT_FULL", "message": "This event is full.", "details": [] } }
+```
+
+Try it from a terminal while `npm run dev` is running:
+
+```bash
+curl "http://localhost:3000/api/v1/events?category=tech"
+```
+
+API tests (Vitest + Supertest) live in `server/tests` and run with `npm test`.
 
 ## Course map
 
@@ -79,6 +110,7 @@ output directory is `dist`.
 | 52    | `v52-validation`    | Zod schemas + `validate` middleware, `ApiError`, one error shape; in-memory registrations (409 duplicate, 422 full or closed)          |
 | 53    | `v53-react-express` | React calls the API through `api/client.js` (`ApiError`), Vite proxy for `/api`, `VITE_API_URL`, API errors shown in the UI            |
 | 54    | `v54-config`        | `dotenv` + `config/index.js` validates env vars at startup; `server/.env.example`, `client/.env.example`                               |
+| 55    | `v55-api-tests`     | Supertest suites for events and registrations; root `npm test` runs both workspaces; README API section                                |
 
 ## Stack (exact installed versions)
 
@@ -106,3 +138,4 @@ output directory is `dist`.
 | helmet                           | 8.3.0   |
 | zod                              | 4.6.7   |
 | dotenv                           | 18.0.8  |
+| supertest                        | 7.3.1   |
