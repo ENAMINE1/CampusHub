@@ -1,22 +1,32 @@
-// Site header: logo text and the main navigation links.
+// Site header: logo link and the main navigation. NavLink highlights the page you are on.
+import { Link, NavLink } from 'react-router';
+
+const linkClass = ({ isActive }) =>
+  `rounded px-2 py-1 hover:underline ${isActive ? 'bg-white/20 underline' : ''}`;
+
 export default function Header() {
   return (
     <header className="bg-brand-700 text-white">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
-        <a href="/" className="text-xl font-bold">
+      <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2 px-4 py-4">
+        <Link to="/" className="text-xl font-bold">
           CampusHub
-        </a>
+        </Link>
         <nav aria-label="Main">
-          <ul className="flex gap-4 text-sm font-medium">
+          <ul className="flex gap-2 text-sm font-medium">
             <li>
-              <a href="/" className="hover:underline">
+              <NavLink to="/events" className={linkClass}>
                 Events
-              </a>
+              </NavLink>
             </li>
             <li>
-              <a href="/" className="hover:underline">
+              <NavLink to="/clubs" className={linkClass}>
                 Clubs
-              </a>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/register" className={linkClass}>
+                Register
+              </NavLink>
             </li>
           </ul>
         </nav>
