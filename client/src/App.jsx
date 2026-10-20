@@ -4,6 +4,7 @@ import Header from './components/Header.jsx';
 import Footer from './components/Footer.jsx';
 import EventFilters from './components/EventFilters.jsx';
 import EventList from './components/EventList.jsx';
+import RegistrationForm from './components/RegistrationForm.jsx';
 import events from './data/events.js';
 
 export default function App() {
@@ -46,6 +47,12 @@ export default function App() {
           favorites={favorites}
           onToggleFavorite={toggleFavorite}
         />
+        <section className="mt-12" aria-labelledby="register-heading">
+          <h2 id="register-heading" className="mb-4 text-2xl font-bold text-slate-900">
+            Join CampusHub
+          </h2>
+          <RegistrationForm />
+        </section>
       </main>
       <Footer />
     </div>
