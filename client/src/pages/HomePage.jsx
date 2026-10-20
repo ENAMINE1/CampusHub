@@ -2,6 +2,8 @@
 import { Link } from 'react-router';
 import EventList from '../components/EventList.jsx';
 import useFetch from '../hooks/useFetch.js';
+import Spinner from '../components/ui/Spinner.jsx';
+import ErrorState from '../components/ui/ErrorState.jsx';
 import useLocalStorage from '../hooks/useLocalStorage.js';
 
 export default function HomePage() {
@@ -34,12 +36,8 @@ export default function HomePage() {
         </Link>
       </section>
       <h2 className="mb-4 text-2xl font-bold text-slate-900">Coming up next</h2>
-      {isLoading && <p className="text-slate-600">Loading events…</p>}
-      {error && (
-        <p role="alert" className="text-red-800">
-          {error}
-        </p>
-      )}
+      {isLoading && <Spinner label="Loading events…" />}
+      {error && <ErrorState message={error} />}
       {data && (
         <EventList
           events={nextEvents}

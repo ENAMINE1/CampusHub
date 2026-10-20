@@ -1,6 +1,6 @@
 // Shows a grid of EventCards, or an EmptyState when there is nothing to show.
 import EventCard from './EventCard.jsx';
-import EmptyState from './EmptyState.jsx';
+import EmptyState from './ui/EmptyState.jsx';
 
 export default function EventList({ events, favorites, onToggleFavorite }) {
   if (events.length === 0) {

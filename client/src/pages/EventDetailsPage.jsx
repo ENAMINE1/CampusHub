@@ -1,19 +1,16 @@
 // Event details page for /events/:id. The id comes from the URL.
 import { Link, useParams } from 'react-router';
 import useFetch from '../hooks/useFetch.js';
+import Spinner from '../components/ui/Spinner.jsx';
+import ErrorState from '../components/ui/ErrorState.jsx';
 import formatDate from '../utils/formatDate.js';
 
 export default function EventDetailsPage() {
   const { id } = useParams();
   const { data, isLoading, error } = useFetch('/data/events.json');
 
-  if (isLoading) return <p className="text-slate-600">Loading event…</p>;
-  if (error)
-    return (
-      <p role="alert" className="text-red-800">
-        {error}
-      </p>
-    );
+  if (isLoading) return <Spinner label="Loading event…" />;
+  if (error) return <ErrorState message={error} />;
 
   const event = data.find((item) => item.id === id);
   if (!event) {

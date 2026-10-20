@@ -4,6 +4,8 @@ import { useSearchParams } from 'react-router';
 import EventFilters from '../components/EventFilters.jsx';
 import EventList from '../components/EventList.jsx';
 import useFetch from '../hooks/useFetch.js';
+import Spinner from '../components/ui/Spinner.jsx';
+import ErrorState from '../components/ui/ErrorState.jsx';
 import useDebounce from '../hooks/useDebounce.js';
 import useLocalStorage from '../hooks/useLocalStorage.js';
 
@@ -50,12 +52,8 @@ export default function EventsPage() {
         onSearchChange={(value) => updateParam('q', value)}
         onCategoryChange={(value) => updateParam('category', value)}
       />
-      {isLoading && <p className="text-slate-600">Loading events…</p>}
-      {error && (
-        <p role="alert" className="rounded-lg bg-red-50 p-4 text-red-800">
-          {error}
-        </p>
-      )}
+      {isLoading && <Spinner label="Loading events…" />}
+      {error && <ErrorState message={error} />}
       {data && (
         <EventList
           events={visibleEvents}

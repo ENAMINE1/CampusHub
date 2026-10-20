@@ -1,6 +1,7 @@
 // Controlled sign-up form: one state object for all fields, validated on blur and on submit.
 import { useState } from 'react';
-import FormField from './FormField.jsx';
+import Input from './ui/Input.jsx';
+import Button from './ui/Button.jsx';
 import validateRegistration from '../utils/validateRegistration.js';
 
 const emptyForm = { name: '', email: '', password: '' };
@@ -35,7 +36,7 @@ export default function RegistrationForm() {
 
   return (
     <form onSubmit={handleSubmit} noValidate className="max-w-md space-y-4">
-      <FormField
+      <Input
         id="register-name"
         name="name"
         label="Name"
@@ -45,7 +46,7 @@ export default function RegistrationForm() {
         onBlur={handleBlur}
         error={visibleError('name')}
       />
-      <FormField
+      <Input
         id="register-email"
         name="email"
         label="Email"
@@ -56,7 +57,7 @@ export default function RegistrationForm() {
         onBlur={handleBlur}
         error={visibleError('email')}
       />
-      <FormField
+      <Input
         id="register-password"
         name="password"
         label="Password"
@@ -67,12 +68,7 @@ export default function RegistrationForm() {
         onBlur={handleBlur}
         error={visibleError('password')}
       />
-      <button
-        type="submit"
-        className="rounded-lg bg-brand-700 px-4 py-2 font-semibold text-white hover:bg-brand-600"
-      >
-        Create account
-      </button>
+      <Button type="submit">Create account</Button>
       {submittedName && (
         <p role="status" className="text-green-800">
           Thanks, {submittedName}! Your account form is valid.

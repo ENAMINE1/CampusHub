@@ -1,5 +1,5 @@
 // A labelled input with an error message wired up for screen readers.
-export default function FormField({ id, label, error, ...inputProps }) {
+export default function Input({ id, label, error, ...inputProps }) {
   const errorId = `${id}-error`;
 
   return (

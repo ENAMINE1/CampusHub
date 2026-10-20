@@ -2,18 +2,20 @@
 import { Link } from 'react-router';
 import formatDate from '../utils/formatDate.js';
 import FavoriteButton from './FavoriteButton.jsx';
+import Card from './ui/Card.jsx';
+import Badge from './ui/Badge.jsx';
 
 export default function EventCard({ event, isFavorite, onToggleFavorite }) {
   // seatsLeft is calculated from the data, never stored separately.
   const seatsLeft = event.capacity - event.seatsTaken;
-  const isFull = seatsLeft <= 0;
 
   return (
-    <article className="flex w-full flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+    <Card className="flex w-full flex-col">
       <div className="flex items-start justify-between gap-2">
-        <p className="text-xs font-semibold tracking-wide text-brand-700 uppercase">
-          {event.category} · {event.club.name}
-        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge>{event.category}</Badge>
+          <span className="text-xs text-slate-600">{event.club.name}</span>
+        </div>
         <FavoriteButton
           isFavorite={isFavorite}
           onToggle={() => onToggleFavorite(event.id)}
@@ -36,11 +38,13 @@ export default function EventCard({ event, isFavorite, onToggleFavorite }) {
           <dd className="inline">{event.venue}</dd>
         </div>
       </dl>
-      {isFull ? (
-        <p className="mt-4 font-semibold text-red-700">Full</p>
-      ) : (
-        <p className="mt-4 font-semibold text-green-800">{seatsLeft} seats left</p>
-      )}
-    </article>
+      <div className="mt-auto pt-4">
+        {seatsLeft > 0 ? (
+          <Badge tone="success">{seatsLeft} seats left</Badge>
+        ) : (
+          <Badge tone="danger">Full</Badge>
+        )}
+      </div>
+    </Card>
   );
 }
