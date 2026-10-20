@@ -12,6 +12,11 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().min(1).max(65535).default(3000),
   CLIENT_URL: z.url().default('http://localhost:5173'),
+  // Long random strings. Anyone who knows a secret can forge login tokens, so keep them out of git.
+  JWT_ACCESS_SECRET: z.string().min(32, 'must be at least 32 characters'),
+  JWT_REFRESH_SECRET: z.string().min(32, 'must be at least 32 characters'),
+  ACCESS_TOKEN_TTL: z.string().default('15m'),
+  REFRESH_TOKEN_TTL: z.string().default('7d'),
 });
 
 const result = envSchema.safeParse(process.env);
@@ -32,6 +37,12 @@ const config = {
   isTest: result.data.NODE_ENV === 'test',
   port: result.data.PORT,
   clientUrl: result.data.CLIENT_URL,
+  jwt: {
+    accessSecret: result.data.JWT_ACCESS_SECRET,
+    refreshSecret: result.data.JWT_REFRESH_SECRET,
+    accessTtl: result.data.ACCESS_TOKEN_TTL,
+    refreshTtl: result.data.REFRESH_TOKEN_TTL,
+  },
 };
 
 export default config;

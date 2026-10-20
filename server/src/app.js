@@ -8,6 +8,7 @@ import requestLogger from './middleware/requestLogger.js';
 import notFound from './middleware/notFound.js';
 import errorHandler from './middleware/errorHandler.js';
 import eventsRouter from './routes/events.routes.js';
+import authRouter from './routes/auth.routes.js';
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use(express.json({ limit: '100kb' })); // parse JSON bodies, reject huge one
 app.get('/api/v1/health', (req, res) => {
   res.json({ status: 'ok', uptime: process.uptime() });
 });
+app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/events', eventsRouter);
 
 app.use(notFound); // no route matched
