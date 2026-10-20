@@ -16,6 +16,10 @@ export default defineConfig(
       sourceType: 'module',
       globals: globals.node,
     },
+    rules: {
+      // Allow "const { _id, ...rest } = doc" to drop a field without a warning about _id.
+      'no-unused-vars': ['error', { ignoreRestSiblings: true }],
+    },
   },
   {
     // The React app runs in the browser and uses JSX.

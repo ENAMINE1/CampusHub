@@ -28,6 +28,7 @@
     "prettier": "3.9.10"
   },
   "allowScripts": {
-    "bcrypt": false
+    "bcrypt": false,
+    "mongodb-memory-server": false
   }
 }
