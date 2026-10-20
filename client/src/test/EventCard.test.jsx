@@ -1,22 +1,13 @@
 // EventCard shows an event's details, its seats left, and a "Full" badge when there are none.
 import { describe, expect, it } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router';
 import EventCard from '../components/EventCard.jsx';
-import { FavoritesProvider } from '../context/FavoritesContext.jsx';
+import renderWithProviders from './renderWithProviders.jsx';
 import { gitWorkshop, hackNight } from './fixtures.js';
 
-// EventCard uses <Link> (needs a router) and FavoriteButton (needs FavoritesContext).
-function renderCard(event) {
-  return render(
-    <MemoryRouter>
-      <FavoritesProvider>
-        <EventCard event={event} />
-      </FavoritesProvider>
-    </MemoryRouter>,
-  );
-}
+// EventCard uses <Link> (needs a router) and FavoriteButton (needs auth and favorites context).
+const renderCard = (event) => renderWithProviders(<EventCard event={event} />);
 
 describe('EventCard', () => {
   it('shows the title as a link to the details page', () => {

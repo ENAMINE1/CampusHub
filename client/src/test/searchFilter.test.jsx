@@ -1,14 +1,14 @@
 // The Events page sends the debounced search, category and page to the API and shows the result.
 // fetch is replaced by a fake "server" that filters the fixtures, so no real API is needed.
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router';
 import EventsPage from '../pages/EventsPage.jsx';
-import { FavoritesProvider } from '../context/FavoritesContext.jsx';
+import renderWithProviders from './renderWithProviders.jsx';
 import { sampleEvents } from './fixtures.js';
 
 function fakeApi(url) {
+  if (url.includes('/auth/')) return { ok: false, status: 401, json: async () => ({}) };
   const params = new URL(url, 'http://test').searchParams;
   const q = (params.get('q') ?? '').toLowerCase();
   const data = sampleEvents.filter((e) => e.title.toLowerCase().includes(q));
@@ -18,19 +18,9 @@ function fakeApi(url) {
   };
 }
 
-function renderPage(path = '/events') {
-  render(
-    <MemoryRouter initialEntries={[path]}>
-      <FavoritesProvider>
-        <EventsPage />
-      </FavoritesProvider>
-    </MemoryRouter>,
-  );
-}
+const renderPage = (path = '/events') => renderWithProviders(<EventsPage />, { path });
 
 describe('EventsPage search', () => {
-  afterEach(() => vi.unstubAllGlobals());
-
   it('sends the debounced search to the API and shows the result', async () => {
     const fetchMock = vi.fn(async (url) => fakeApi(url));
     vi.stubGlobal('fetch', fetchMock);
@@ -55,8 +45,9 @@ describe('EventsPage search', () => {
     renderPage('/events?category=tech&page=2');
 
     await screen.findAllByRole('article');
-    expect(fetchMock.mock.calls[0][0]).toContain('category=tech');
-    expect(fetchMock.mock.calls[0][0]).toContain('page=2');
+    const [eventsUrl] = fetchMock.mock.calls.find(([url]) => url.includes('/events?'));
+    expect(eventsUrl).toContain('category=tech');
+    expect(eventsUrl).toContain('page=2');
     expect(screen.getByLabelText('Category')).toHaveValue('tech');
   });
 });

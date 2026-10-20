@@ -16,6 +16,17 @@ export default function RegisterForEvent({ event, onChange }) {
   const { user } = useAuth();
   const location = useLocation();
 
+  async function cancel() {
+    setError('');
+    try {
+      await apiFetch(`/events/${event.id}/registrations/me`, { method: 'DELETE' });
+      dispatch({ type: 'cancelled', eventId: event.id });
+      onChange();
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
   async function confirm() {
     setIsSaving(true);
     setError('');
@@ -50,9 +61,19 @@ export default function RegisterForEvent({ event, onChange }) {
   }
   if (isRegistered(event.id)) {
     return (
-      <p role="status" className="font-semibold text-green-800 dark:text-green-300">
-        You are registered for {event.title}.
-      </p>
+      <div className="flex flex-wrap items-center gap-3">
+        <p role="status" className="font-semibold text-green-800 dark:text-green-300">
+          You are registered for {event.title}.
+        </p>
+        <Button variant="secondary" onClick={cancel}>
+          Cancel registration
+        </Button>
+        {error && (
+          <p role="alert" className="w-full text-red-700 dark:text-red-300">
+            {error}
+          </p>
+        )}
+      </div>
     );
   }
 

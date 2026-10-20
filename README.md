@@ -86,25 +86,30 @@ The Express API lives in `server/` and listens on http://localhost:3000. In deve
 app reaches it through the Vite proxy at `/api/v1`. The full contract (including endpoints that
 arrive in later videos) is in [docs/api-contract.md](docs/api-contract.md).
 
-| Method | Path                             | What it does                                                                                                                                           |
-| ------ | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| GET    | /api/v1/health                   | `{ status, uptime }`                                                                                                                                   |
-| GET    | /api/v1/events                   | Paged list `{ data, page, totalPages, total }`. Query: `page`, `limit` (max 50), `sort=date` or `title`, `category`, `club`, `q` (word search), `when` |
-| GET    | /api/v1/events/:id               | One event with `seatsLeft`                                                                                                                             |
-| POST   | /api/v1/events                   | Create an event (validated with Zod). **Owner**: admin, or club admin of that club                                                                     |
-| PATCH  | /api/v1/events/:id               | Update some fields. **Owner**                                                                                                                          |
-| DELETE | /api/v1/events/:id               | Delete an event. **Owner**                                                                                                                             |
-| POST   | /api/v1/events/:id/registrations | Register yourself (**student** login): 409 duplicate, 422 full or closed                                                                               |
-| GET    | /api/v1/events/:id/registrations | Registrant list. **Owner**                                                                                                                             |
-| POST   | /api/v1/auth/register            | Sign up `{ name, email, password }`: returns `{ user, accessToken }` and sets the refresh cookie                                                       |
-| POST   | /api/v1/auth/login               | Log in: same response as register; one generic 401; 5 attempts per 15 min per IP                                                                       |
-| POST   | /api/v1/auth/refresh             | New access token from the refresh cookie (the cookie is rotated)                                                                                       |
-| POST   | /api/v1/auth/logout              | Clears the cookie and forgets the stored token                                                                                                         |
-| GET    | /api/v1/auth/me                  | The logged-in user. Needs `Authorization: Bearer <accessToken>`                                                                                        |
-| GET    | /api/v1/clubs                    | All clubs                                                                                                                                              |
-| GET    | /api/v1/clubs/:slug              | One club with its upcoming events                                                                                                                      |
-| GET    | /api/v1/me/registrations         | My registrations with event details. Query `when=upcoming` or `past`. **Login**                                                                        |
-| GET    | /api/v1/admin/stats              | Registrations per event and per category (aggregation). **Admin**                                                                                      |
+| Method | Path                                | What it does                                                                                                                                           |
+| ------ | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| GET    | /api/v1/health                      | `{ status, uptime }`                                                                                                                                   |
+| GET    | /api/v1/events                      | Paged list `{ data, page, totalPages, total }`. Query: `page`, `limit` (max 50), `sort=date` or `title`, `category`, `club`, `q` (word search), `when` |
+| GET    | /api/v1/events/:id                  | One event with `seatsLeft`                                                                                                                             |
+| POST   | /api/v1/events                      | Create an event (validated with Zod). **Owner**: admin, or club admin of that club                                                                     |
+| PATCH  | /api/v1/events/:id                  | Update some fields. **Owner**                                                                                                                          |
+| DELETE | /api/v1/events/:id                  | Delete an event. **Owner**                                                                                                                             |
+| POST   | /api/v1/events/:id/registrations    | Register yourself (**student** login): 409 duplicate, 422 full or closed                                                                               |
+| GET    | /api/v1/events/:id/registrations    | Registrant list. **Owner**                                                                                                                             |
+| POST   | /api/v1/auth/register               | Sign up `{ name, email, password }`: returns `{ user, accessToken }` and sets the refresh cookie                                                       |
+| POST   | /api/v1/auth/login                  | Log in: same response as register; one generic 401; 5 attempts per 15 min per IP                                                                       |
+| POST   | /api/v1/auth/refresh                | New access token from the refresh cookie (the cookie is rotated)                                                                                       |
+| POST   | /api/v1/auth/logout                 | Clears the cookie and forgets the stored token                                                                                                         |
+| GET    | /api/v1/auth/me                     | The logged-in user. Needs `Authorization: Bearer <accessToken>`                                                                                        |
+| GET    | /api/v1/clubs                       | All clubs                                                                                                                                              |
+| GET    | /api/v1/clubs/:slug                 | One club with its upcoming events                                                                                                                      |
+| GET    | /api/v1/me/registrations            | My registrations with event details. Query `when=upcoming` or `past`. **Login**                                                                        |
+| GET    | /api/v1/admin/stats                 | Registrations per event and per category (aggregation). **Admin**                                                                                      |
+| DELETE | /api/v1/events/:id/registrations/me | Cancel my registration and free the seat (until the event starts). **Login**                                                                           |
+| GET    | /api/v1/me/favorites                | My favorite events. **Login**                                                                                                                          |
+| PUT    | /api/v1/me/favorites/:eventId       | Add a favorite (idempotent, 204). **Login**                                                                                                            |
+| DELETE | /api/v1/me/favorites/:eventId       | Remove a favorite (idempotent, 204). **Login**                                                                                                         |
+| GET    | /api/v1/me/clubs                    | Clubs I manage, for the dashboard. **Club admin / admin**                                                                                              |
 
 No token or a bad token gives **401**; a valid token without permission gives **403**.
 
@@ -170,6 +175,7 @@ API tests (Vitest + Supertest) live in `server/tests` and run with `npm test`.
 | 61    | `v61-populate-aggregation` | Populated club with logo on event details, `GET /clubs` and `/clubs/:slug`, `GET /me/registrations`, `GET /admin/stats` aggregation                                      |
 | 62    | `v62-pagination`           | SPEC indexes (checked with `explain()`); paged, sorted, text-searched `GET /events`; `Pagination` and sort in React                                                      |
 | 63    | `v63-auth-fullstack`       | React login/register pages, real `AuthContext` with silent refresh, `ProtectedRoute`, logout, refresh-and-retry in `api/client.js`; registrations loaded from the server |
+| 64    | `v64-crud-roles`           | Atomic register and cancel, club-admin dashboard (create/edit/delete events, registrant list), role-based nav, server favorites with guest merge                         |
 
 ## Stack (exact installed versions)
 

@@ -12,8 +12,14 @@ import NotFoundPage from './pages/NotFoundPage.jsx';
 import GuestOnly from './routes/GuestOnly.jsx';
 import ProtectedRoute from './routes/ProtectedRoute.jsx';
 
-// Loaded on demand: most visitors never open this page, so its code stays out of the first download.
+// Loaded on demand: most visitors never open these pages, so their code stays out of the first download.
 const MyRegistrationsPage = lazy(() => import('./pages/MyRegistrationsPage.jsx'));
+const DashboardPage = lazy(() => import('./pages/dashboard/DashboardPage.jsx'));
+const EventFormPage = lazy(() => import('./pages/dashboard/EventFormPage.jsx'));
+const RegistrantsPage = lazy(() => import('./pages/dashboard/RegistrantsPage.jsx'));
+
+const STAFF = ['clubAdmin', 'admin'];
+const staffOnly = (page) => <ProtectedRoute roles={STAFF}>{page}</ProtectedRoute>;
 
 export default function App() {
   return (
@@ -46,6 +52,13 @@ export default function App() {
               <MyRegistrationsPage />
             </ProtectedRoute>
           }
+        />
+        <Route path="dashboard" element={staffOnly(<DashboardPage />)} />
+        <Route path="dashboard/events/new" element={staffOnly(<EventFormPage />)} />
+        <Route path="dashboard/events/:id/edit" element={staffOnly(<EventFormPage />)} />
+        <Route
+          path="dashboard/events/:id/registrations"
+          element={staffOnly(<RegistrantsPage />)}
         />
         <Route path="*" element={<NotFoundPage />} />
       </Route>

@@ -34,6 +34,13 @@ export default function Header() {
                 </NavLink>
               </li>
             )}
+            {(user?.role === 'clubAdmin' || user?.role === 'admin') && (
+              <li>
+                <NavLink to="/dashboard" className={linkClass}>
+                  Dashboard
+                </NavLink>
+              </li>
+            )}
             {!user && (
               <li>
                 <NavLink to="/login" className={linkClass}>
