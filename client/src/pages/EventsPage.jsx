@@ -1,5 +1,6 @@
 // Events page: search, filter and favorite the full list of events.
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useSearchParams } from 'react-router';
 import EventFilters from '../components/EventFilters.jsx';
 import EventList from '../components/EventList.jsx';
 import useFetch from '../hooks/useFetch.js';
@@ -8,10 +9,20 @@ import useLocalStorage from '../hooks/useLocalStorage.js';
 
 export default function EventsPage() {
   const { data, isLoading, error } = useFetch('/data/events.json');
-  const [search, setSearch] = useState('');
+  // The filters live in the URL (?q=git&category=tech), so a filtered view can be bookmarked or shared.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const search = searchParams.get('q') ?? '';
+  const category = searchParams.get('category') ?? '';
   const debouncedSearch = useDebounce(search, 300);
-  const [category, setCategory] = useState('');
   const [favorites, setFavorites] = useLocalStorage('campushub:favorites', []);
+
+  function updateParam(name, value) {
+    const next = new URLSearchParams(searchParams);
+    if (value) next.set(name, value);
+    else next.delete(name);
+    // replace: typing should not add one browser-history entry per keystroke.
+    setSearchParams(next, { replace: true });
+  }
 
   const query = debouncedSearch.trim().toLowerCase();
   const visibleEvents = (data ?? []).filter(
@@ -36,8 +47,8 @@ export default function EventsPage() {
       <EventFilters
         search={search}
         category={category}
-        onSearchChange={setSearch}
-        onCategoryChange={setCategory}
+        onSearchChange={(value) => updateParam('q', value)}
+        onCategoryChange={(value) => updateParam('category', value)}
       />
       {isLoading && <p className="text-slate-600">Loading events…</p>}
       {error && (

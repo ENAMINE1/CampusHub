@@ -37,16 +37,17 @@ The React app opens at http://localhost:5173.
 
 ## Course map
 
-| Video | Tag                | What it added                                                                                                             |
-| ----- | ------------------ | ------------------------------------------------------------------------------------------------------------------------- |
-| 4, 7  | `v07-foundation`   | Git ignore rules, ESLint + Prettier, `.nvmrc`, README, AI log                                                             |
-| 32    | `v32-vite-setup`   | Vite + React app in `client/` with Tailwind 4 and a CampusHub heading                                                     |
-| 33    | `v33-components`   | `Header`, `Footer`, `EventCard` components, brand colour tokens in `@theme`                                               |
-| 34    | `v34-props-lists`  | Sample `events.js`, `EventList` with keys, `EmptyState`, "Full" vs seats-left rendering                                   |
-| 35    | `v35-usestate`     | Search, category filter and favorites in `useState`; filtered list derived, not stored                                    |
-| 36    | `v36-forms`        | Controlled `RegistrationForm` with one state object, blur and submit validation, accessible errors                        |
-| 37    | `v37-useeffect`    | Events fetched from `public/data/events.json` with loading/error states, abort cleanup, tab title, 300 ms search debounce |
-| 38    | `v38-custom-hooks` | `useFetch`, `useDebounce`, `useLocalStorage` hooks; favorites survive a reload                                            |
+| Video | Tag                | What it added                                                                                                               |
+| ----- | ------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| 4, 7  | `v07-foundation`   | Git ignore rules, ESLint + Prettier, `.nvmrc`, README, AI log                                                               |
+| 32    | `v32-vite-setup`   | Vite + React app in `client/` with Tailwind 4 and a CampusHub heading                                                       |
+| 33    | `v33-components`   | `Header`, `Footer`, `EventCard` components, brand colour tokens in `@theme`                                                 |
+| 34    | `v34-props-lists`  | Sample `events.js`, `EventList` with keys, `EmptyState`, "Full" vs seats-left rendering                                     |
+| 35    | `v35-usestate`     | Search, category filter and favorites in `useState`; filtered list derived, not stored                                      |
+| 36    | `v36-forms`        | Controlled `RegistrationForm` with one state object, blur and submit validation, accessible errors                          |
+| 37    | `v37-useeffect`    | Events fetched from `public/data/events.json` with loading/error states, abort cleanup, tab title, 300 ms search debounce   |
+| 38    | `v38-custom-hooks` | `useFetch`, `useDebounce`, `useLocalStorage` hooks; favorites survive a reload                                              |
+| 39    | `v39-routing`      | React Router layout with `Outlet` and `NavLink`; Home, Events, Event details, Clubs, Register, NotFound; filters in the URL |
 
 ## Stack (exact installed versions)
 
@@ -60,3 +61,4 @@ The React app opens at http://localhost:5173.
 | vite                           | 8.3.4   |
 | @vitejs/plugin-react           | 6.1.2   |
 | tailwindcss, @tailwindcss/vite | 4.3.3   |
+| react-router                   | 7.18.4  |

@@ -1,0 +1,70 @@
+// Event details page for /events/:id. The id comes from the URL.
+import { Link, useParams } from 'react-router';
+import useFetch from '../hooks/useFetch.js';
+import formatDate from '../utils/formatDate.js';
+
+export default function EventDetailsPage() {
+  const { id } = useParams();
+  const { data, isLoading, error } = useFetch('/data/events.json');
+
+  if (isLoading) return <p className="text-slate-600">Loading event…</p>;
+  if (error)
+    return (
+      <p role="alert" className="text-red-800">
+        {error}
+      </p>
+    );
+
+  const event = data.find((item) => item.id === id);
+  if (!event) {
+    return (
+      <div className="py-16 text-center">
+        <h1 className="text-2xl font-bold text-slate-900">Event not found</h1>
+        <Link
+          to="/events"
+          className="mt-4 inline-block font-semibold text-brand-700 underline"
+        >
+          Back to all events
+        </Link>
+      </div>
+    );
+  }
+
+  const seatsLeft = event.capacity - event.seatsTaken;
+
+  return (
+    <article className="rounded-2xl border border-slate-200 bg-white p-8">
+      <Link to="/events" className="text-sm font-semibold text-brand-700 underline">
+        ← All events
+      </Link>
+      <p className="mt-4 text-sm font-semibold tracking-wide text-brand-700 uppercase">
+        {event.category} · {event.club.name}
+      </p>
+      <h1 className="mt-1 text-3xl font-bold text-slate-900">{event.title}</h1>
+      <p className="mt-4 text-slate-700">{event.description}</p>
+      <dl className="mt-6 grid gap-3 text-slate-800 sm:grid-cols-2">
+        <div>
+          <dt className="font-semibold">Starts</dt>
+          <dd>{formatDate(event.startsAt)}</dd>
+        </div>
+        <div>
+          <dt className="font-semibold">Ends</dt>
+          <dd>{formatDate(event.endsAt)}</dd>
+        </div>
+        <div>
+          <dt className="font-semibold">Venue</dt>
+          <dd>{event.venue}</dd>
+        </div>
+        <div>
+          <dt className="font-semibold">Register by</dt>
+          <dd>{formatDate(event.registrationDeadline)}</dd>
+        </div>
+      </dl>
+      <p className="mt-6 text-lg font-semibold text-green-800">
+        {seatsLeft > 0
+          ? `${seatsLeft} of ${event.capacity} seats left`
+          : 'This event is full'}
+      </p>
+    </article>
+  );
+}

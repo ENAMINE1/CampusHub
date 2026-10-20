@@ -1,4 +1,5 @@
 // One event as a card. Everything it shows arrives through props.
+import { Link } from 'react-router';
 import formatDate from '../utils/formatDate.js';
 import FavoriteButton from './FavoriteButton.jsx';
 
@@ -19,7 +20,11 @@ export default function EventCard({ event, isFavorite, onToggleFavorite }) {
           title={event.title}
         />
       </div>
-      <h2 className="text-lg font-semibold text-slate-900">{event.title}</h2>
+      <h2 className="text-lg font-semibold text-slate-900">
+        <Link to={`/events/${event.id}`} className="hover:underline">
+          {event.title}
+        </Link>
+      </h2>
       <p className="mt-2 text-sm text-slate-600">{event.description}</p>
       <dl className="mt-4 space-y-1 text-sm text-slate-700">
         <div>
