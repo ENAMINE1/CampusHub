@@ -1,0 +1,26 @@
+# Dependencies are installed with npm install, never committed.
+node_modules/
+
+# Secrets live in .env files; only .env.example is committed.
+.env
+.env.*
+!.env.example
+
+# Build, test and runtime output
+dist/
+coverage/
+reports/
+uploads/
+playwright-report/
+test-results/
+
+# Editor and OS clutter
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.log
+
+# Personal Claude Code settings
+.claude/settings.local.json
