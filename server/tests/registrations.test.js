@@ -2,20 +2,24 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import request from 'supertest';
 import app from '../src/app.js';
-import { authHeaderFor, validEventBody } from './helpers.js';
+import { authHeaderFor, createClub, validEventBody } from './helpers.js';
 
 const api = request(app);
 let admin;
+let clubId;
+// Every event in this file belongs to one test club.
+const body = (overrides) => validEventBody({ club: clubId, ...overrides });
 
 beforeAll(async () => {
   admin = await authHeaderFor('admin');
+  clubId = await createClub();
 });
 
 async function createEvent(overrides) {
   const res = await api
     .post('/api/v1/events')
     .set('Authorization', admin)
-    .send(validEventBody(overrides));
+    .send(body(overrides));
   return res.body.id;
 }
 

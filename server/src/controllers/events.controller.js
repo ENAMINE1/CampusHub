@@ -12,7 +12,7 @@ export async function getById(req, res) {
 }
 
 export async function create(req, res) {
-  res.status(201).json(await eventsService.createEvent(req.validated.body));
+  res.status(201).json(await eventsService.createEvent(req.validated.body, req.user._id));
 }
 
 export async function update(req, res) {

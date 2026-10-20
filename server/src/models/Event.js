@@ -3,22 +3,13 @@
 import mongoose from 'mongoose';
 import { CATEGORIES } from '../validators/event.schemas.js';
 
-// For now an event stores a copy of its club's name and slug (embedding).
-// Video 60 replaces this with a reference to a Club document.
-const clubSnapshotSchema = new mongoose.Schema(
-  {
-    name: { type: String, required: true },
-    slug: { type: String, required: true },
-  },
-  { _id: false },
-);
-
 const eventSchema = new mongoose.Schema(
   {
     title: { type: String, required: true, trim: true, minlength: 3, maxlength: 120 },
     description: { type: String, trim: true, maxlength: 5000, default: '' },
     category: { type: String, required: true, enum: CATEGORIES },
-    club: { type: clubSnapshotSchema, required: true },
+    // A reference: only the club's _id is stored. populate() swaps it for the club document when reading.
+    club: { type: mongoose.Schema.Types.ObjectId, ref: 'Club', required: true },
     venue: { type: String, required: true, trim: true, maxlength: 200 },
     startsAt: { type: Date, required: true },
     endsAt: { type: Date, required: true },

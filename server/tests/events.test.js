@@ -2,24 +2,28 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import request from 'supertest';
 import app from '../src/app.js';
-import { authHeaderFor, validEventBody } from './helpers.js';
+import { authHeaderFor, createClub, validEventBody } from './helpers.js';
 
 const api = request(app);
 let admin; // Authorization header of an admin, created once for this file
+let clubId;
+// Every event in this file belongs to one test club.
+const body = (overrides) => validEventBody({ club: clubId, ...overrides });
 let gitWorkshopId;
 
 // Each test file starts with an empty database, so create the events these tests read.
 beforeAll(async () => {
   admin = await authHeaderFor('admin');
+  clubId = await createClub();
   const git = await api
     .post('/api/v1/events')
     .set('Authorization', admin)
-    .send(validEventBody({ title: 'Intro to Git Workshop', category: 'workshop' }));
+    .send(body({ title: 'Intro to Git Workshop', category: 'workshop' }));
   gitWorkshopId = git.body.id;
   await api
     .post('/api/v1/events')
     .set('Authorization', admin)
-    .send(validEventBody({ title: 'Hack Night', category: 'tech' }));
+    .send(body({ title: 'Hack Night', category: 'tech' }));
 });
 
 describe('GET /api/v1/health', () => {
@@ -84,10 +88,11 @@ describe('POST, PATCH and DELETE /api/v1/events', () => {
     const created = await api
       .post('/api/v1/events')
       .set('Authorization', admin)
-      .send(validEventBody());
+      .send(body());
     expect(created.status).toBe(201);
     expect(created.body).toMatchObject({ seatsTaken: 0, seatsLeft: 2 });
-    expect(created.body.club).toEqual({ name: 'Code Club', slug: 'code-club' });
+    // The club comes back populated: id, name and slug instead of a bare id.
+    expect(created.body.club).toMatchObject({ id: clubId, name: expect.any(String) });
     const url = `/api/v1/events/${created.body.id}`;
 
     const updated = await api
@@ -106,11 +111,11 @@ describe('POST, PATCH and DELETE /api/v1/events', () => {
       .post('/api/v1/events')
       .set('Authorization', admin)
       .send(
-        validEventBody({
+        body({
           title: 'Hi',
           capacity: 0,
           seatsTaken: 99,
-          endsAt: validEventBody().registrationDeadline,
+          endsAt: body().registrationDeadline,
         }),
       );
     expect(res.status).toBe(422);

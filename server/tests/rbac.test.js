@@ -3,21 +3,35 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import request from 'supertest';
 import jwt from 'jsonwebtoken';
 import app from '../src/app.js';
-import { authHeaderFor, validEventBody } from './helpers.js';
+import {
+  authHeaderFor,
+  createClub,
+  createUserWithAuth,
+  validEventBody,
+} from './helpers.js';
 
 const api = request(app);
 let student;
-let clubAdmin;
+let clubAdmin; // manages codeClub only
+let otherAdmin; // manages otherClub only
+let codeClub;
+let otherClub;
+let freeClub; // nobody's club
 
 beforeAll(async () => {
   student = await authHeaderFor('student');
-  // Listed in data/clubs.json as an admin of code-club only.
-  clubAdmin = await authHeaderFor('clubAdmin', 'code.lead@campushub.dev');
+  const lead = await createUserWithAuth('clubAdmin');
+  const otherLead = await createUserWithAuth('clubAdmin');
+  clubAdmin = lead.auth;
+  otherAdmin = otherLead.auth;
+  codeClub = await createClub([lead.user]);
+  otherClub = await createClub([otherLead.user]);
+  freeClub = await createClub();
 });
 
 describe('creating events', () => {
   it('401 without a token', async () => {
-    const res = await api.post('/api/v1/events').send(validEventBody());
+    const res = await api.post('/api/v1/events').send(validEventBody({ club: codeClub }));
     expect(res.status).toBe(401);
     expect(res.body.error.code).toBe('UNAUTHENTICATED');
   });
@@ -30,7 +44,7 @@ describe('creating events', () => {
     const res = await api
       .post('/api/v1/events')
       .set('Authorization', `Bearer ${forged}`)
-      .send(validEventBody());
+      .send(validEventBody({ club: codeClub }));
     expect(res.status).toBe(401);
   });
 
@@ -49,7 +63,7 @@ describe('creating events', () => {
     const res = await api
       .post('/api/v1/events')
       .set('Authorization', student)
-      .send(validEventBody());
+      .send(validEventBody({ club: codeClub }));
     expect(res.status).toBe(403);
     expect(res.body.error.code).toBe('FORBIDDEN');
   });
@@ -58,7 +72,7 @@ describe('creating events', () => {
     const res = await api
       .post('/api/v1/events')
       .set('Authorization', clubAdmin)
-      .send(validEventBody());
+      .send(validEventBody({ club: codeClub }));
     expect(res.status).toBe(201);
   });
 });
@@ -76,7 +90,7 @@ describe('ownership (FR-1.6)', () => {
     const res = await api
       .post('/api/v1/events')
       .set('Authorization', clubAdmin)
-      .send(validEventBody({ club: 'code-club' }));
+      .send(validEventBody({ club: codeClub }));
     return `/api/v1/events/${res.body.id}`;
   }
 
@@ -84,13 +98,12 @@ describe('ownership (FR-1.6)', () => {
     const res = await api
       .post('/api/v1/events')
       .set('Authorization', clubAdmin)
-      .send(validEventBody({ club: 'cultural-society' }));
+      .send(validEventBody({ club: otherClub }));
     expect(res.status).toBe(403);
   });
 
   it("403 when a club admin edits or deletes another club's event", async () => {
     const url = await codeClubEvent();
-    const otherAdmin = await authHeaderFor('clubAdmin', 'culture.lead@campushub.dev');
     expect(
       (await api.patch(url).set('Authorization', otherAdmin).send({ title: 'Mine now' }))
         .status,
@@ -103,7 +116,7 @@ describe('ownership (FR-1.6)', () => {
     const res = await api
       .patch(url)
       .set('Authorization', clubAdmin)
-      .send({ club: 'sports-council' });
+      .send({ club: freeClub });
     expect(res.status).toBe(403);
   });
 

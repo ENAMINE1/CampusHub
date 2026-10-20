@@ -8,16 +8,24 @@ import ApiError from '../utils/ApiError.js';
 
 export function createAccessToken(user) {
   // Put only what the server needs to authorise a request in the token: it is readable by anyone.
-  return jwt.sign({ sub: user.id, role: user.role }, config.jwt.accessSecret, {
-    expiresIn: config.jwt.accessTtl,
-  });
+  return jwt.sign(
+    { sub: user._id.toString(), role: user.role },
+    config.jwt.accessSecret,
+    {
+      expiresIn: config.jwt.accessTtl,
+    },
+  );
 }
 
 export function createRefreshToken(user) {
   // jti makes every token unique, even two created in the same second.
-  return jwt.sign({ sub: user.id, jti: randomUUID() }, config.jwt.refreshSecret, {
-    expiresIn: config.jwt.refreshTtl,
-  });
+  return jwt.sign(
+    { sub: user._id.toString(), jti: randomUUID() },
+    config.jwt.refreshSecret,
+    {
+      expiresIn: config.jwt.refreshTtl,
+    },
+  );
 }
 
 // Returns the payload, or null if the token is missing, forged or expired.

@@ -6,15 +6,21 @@ import { canManageClub } from '../services/clubs.service.js';
 import { findEventRecord } from '../services/events.service.js';
 
 export default async function requireEventOwner(req, res, next) {
-  const clubSlugs = [];
+  const clubIds = [];
   if (req.validated.params?.id) {
     const event = await findEventRecord(req.validated.params.id);
-    clubSlugs.push(event.club.slug);
+    clubIds.push(event.club);
   }
-  if (req.validated.body?.club) clubSlugs.push(req.validated.body.club);
+  if (req.validated.body?.club) clubIds.push(req.validated.body.club);
 
-  if (!clubSlugs.every((slug) => canManageClub(req.user, slug))) {
-    throw new ApiError(403, 'FORBIDDEN', 'You can only manage events of your own clubs.');
+  for (const clubId of clubIds) {
+    if (!(await canManageClub(req.user, clubId))) {
+      throw new ApiError(
+        403,
+        'FORBIDDEN',
+        'You can only manage events of your own clubs.',
+      );
+    }
   }
   next();
 }

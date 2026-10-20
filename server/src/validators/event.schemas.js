@@ -13,11 +13,14 @@ export const CATEGORIES = [
 
 const isoDate = z.iso.datetime({ offset: true });
 
+// MongoDB ids are 24 hexadecimal characters.
+export const objectId = z.string().regex(/^[a-f\d]{24}$/i, 'Not a valid id.');
+
 const eventFields = z.strictObject({
   title: z.string().trim().min(3).max(120),
   description: z.string().trim().max(5000).default(''),
   category: z.enum(CATEGORIES),
-  club: z.string().trim().min(1), // the club's slug
+  club: objectId, // the organising club's id
   venue: z.string().trim().min(1).max(200),
   startsAt: isoDate,
   endsAt: isoDate,
@@ -52,10 +55,7 @@ export const createEventSchema = eventFields.superRefine((event, ctx) => {
 });
 export const updateEventSchema = eventFields.partial();
 
-// MongoDB ids are 24 hexadecimal characters.
-export const eventIdParams = z.strictObject({
-  id: z.string().regex(/^[a-f\d]{24}$/i, 'Not a valid id.'),
-});
+export const eventIdParams = z.strictObject({ id: objectId });
 
 export const listEventsQuery = z.strictObject({
   category: z.enum(CATEGORIES).optional(),

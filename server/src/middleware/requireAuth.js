@@ -4,14 +4,14 @@ import ApiError from '../utils/ApiError.js';
 import { verifyAccessToken } from '../services/token.service.js';
 import { findUserById } from '../services/user.service.js';
 
-export default function requireAuth(req, res, next) {
+export default async function requireAuth(req, res, next) {
   const [scheme, token] = (req.headers.authorization ?? '').split(' ');
   if (scheme !== 'Bearer' || !token) {
     throw new ApiError(401, 'UNAUTHENTICATED', 'Please log in.');
   }
   const payload = verifyAccessToken(token);
   // Look the user up again: the account may have been deleted or changed since the token was made.
-  const user = findUserById(payload.sub);
+  const user = await findUserById(payload.sub);
   if (!user) throw new ApiError(401, 'UNAUTHENTICATED', 'Please log in.');
   req.user = user;
   next();

@@ -17,9 +17,9 @@ const cookieOptions = {
 };
 
 // Start (or continue) a session: rotate the refresh token, store its hash, send both tokens.
-function sendSession(res, status, user) {
+async function sendSession(res, status, user) {
   const refreshToken = tokenService.createRefreshToken(user);
-  userService.saveRefreshTokenHash(user, tokenService.hashToken(refreshToken));
+  await userService.saveRefreshTokenHash(user, tokenService.hashToken(refreshToken));
   res.cookie(REFRESH_COOKIE, refreshToken, { ...cookieOptions, maxAge: SEVEN_DAYS_MS });
   // The access token goes in the JSON body; the client keeps it in memory only.
   res.status(status).json({
@@ -30,35 +30,36 @@ function sendSession(res, status, user) {
 
 export async function register(req, res) {
   const user = await userService.createUser(req.validated.body);
-  sendSession(res, 201, user);
+  await sendSession(res, 201, user);
 }
 
 export async function login(req, res) {
   const { email, password } = req.validated.body;
   const user = await userService.verifyCredentials(email, password);
-  sendSession(res, 200, user);
+  await sendSession(res, 200, user);
 }
 
-export function refresh(req, res) {
+export async function refresh(req, res) {
   const token = req.cookies[REFRESH_COOKIE];
   const payload = token && tokenService.verifyRefreshToken(token);
-  const user = payload && userService.findUserById(payload.sub);
+  const user =
+    payload && (await userService.findUserById(payload.sub, { withRefreshHash: true }));
   if (!user) throw new ApiError(401, 'SESSION_EXPIRED', 'Please log in again.');
 
   if (!tokenService.tokenMatchesHash(token, user.refreshTokenHash)) {
     // A valid but already-used token means it may have been stolen and replayed.
     // End every session for this user to be safe.
-    userService.saveRefreshTokenHash(user, null);
+    await userService.saveRefreshTokenHash(user, null);
     res.clearCookie(REFRESH_COOKIE, cookieOptions);
     throw new ApiError(401, 'SESSION_EXPIRED', 'Please log in again.');
   }
-  sendSession(res, 200, user); // rotation: the old refresh token stops working now
+  await sendSession(res, 200, user); // rotation: the old refresh token stops working now
 }
 
-export function logout(req, res) {
+export async function logout(req, res) {
   const payload = tokenService.verifyRefreshToken(req.cookies[REFRESH_COOKIE]);
-  const user = payload && userService.findUserById(payload.sub);
-  if (user) userService.saveRefreshTokenHash(user, null);
+  const user = payload && (await userService.findUserById(payload.sub));
+  if (user) await userService.saveRefreshTokenHash(user, null);
   res.clearCookie(REFRESH_COOKIE, cookieOptions);
   res.status(204).end();
 }

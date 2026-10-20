@@ -2,7 +2,6 @@
 import config from './config/index.js';
 import app from './app.js';
 import { connectDB } from './db/connect.js';
-import seedDemoUsers, { DEMO_PASSWORD } from './utils/seedDemoUsers.js';
 
 try {
   const where = await connectDB(config.mongoUri);
@@ -13,13 +12,6 @@ try {
     'Check MONGODB_URI in server/.env (and your IP in Atlas Network Access).',
   );
   process.exit(1);
-}
-
-if (config.env === 'development') {
-  const emails = await seedDemoUsers();
-  console.log(
-    `Demo logins (development only, password "${DEMO_PASSWORD}"): ${emails.join(', ')}`,
-  );
 }
 
 app.listen(config.port, () => {
