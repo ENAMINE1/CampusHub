@@ -2,9 +2,9 @@
 import EventCard from './EventCard.jsx';
 import EmptyState from './EmptyState.jsx';
 
-export default function EventList({ events }) {
+export default function EventList({ events, favorites, onToggleFavorite }) {
   if (events.length === 0) {
-    return <EmptyState message="No events to show yet." />;
+    return <EmptyState message="No events match your search." />;
   }
 
   return (
@@ -12,7 +12,11 @@ export default function EventList({ events }) {
       {/* Classic mistake: key={index}. Keys must be stable ids, or React mixes up items when the list changes. */}
       {events.map((event) => (
         <li key={event.id} className="flex">
-          <EventCard event={event} />
+          <EventCard
+            event={event}
+            isFavorite={favorites.includes(event.id)}
+            onToggleFavorite={onToggleFavorite}
+          />
         </li>
       ))}
     </ul>
