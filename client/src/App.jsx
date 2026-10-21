@@ -17,6 +17,7 @@ const MyRegistrationsPage = lazy(() => import('./pages/MyRegistrationsPage.jsx')
 const DashboardPage = lazy(() => import('./pages/dashboard/DashboardPage.jsx'));
 const EventFormPage = lazy(() => import('./pages/dashboard/EventFormPage.jsx'));
 const RegistrantsPage = lazy(() => import('./pages/dashboard/RegistrantsPage.jsx'));
+const AdminPage = lazy(() => import('./pages/admin/AdminPage.jsx'));
 
 const STAFF = ['clubAdmin', 'admin'];
 const staffOnly = (page) => <ProtectedRoute roles={STAFF}>{page}</ProtectedRoute>;
@@ -59,6 +60,14 @@ export default function App() {
         <Route
           path="dashboard/events/:id/registrations"
           element={staffOnly(<RegistrantsPage />)}
+        />
+        <Route
+          path="admin"
+          element={
+            <ProtectedRoute roles={['admin']}>
+              <AdminPage />
+            </ProtectedRoute>
+          }
         />
         <Route path="*" element={<NotFoundPage />} />
       </Route>

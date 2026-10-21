@@ -56,10 +56,11 @@ Generate a secret with `node -e "console.log(crypto.randomBytes(32).toString('he
 user (Database Access), allow your IP (Network Access), then Connect → Drivers and copy the
 string. Put `campushub` before the `?`. More in [docs/mongosh-cheatsheet.md](docs/mongosh-cheatsheet.md).
 
-Load the sample events once (this replaces the events in that database):
+Load the demo data (3 clubs, 8 users, 24 events, registrations). It empties the database first,
+so you can run it again any time to reset, and it refuses to run when `NODE_ENV=production`:
 
 ```bash
-npm run seed --workspace server
+npm run seed
 ```
 
 Tests do not need any of this: they start a throwaway in-memory MongoDB (the first run
@@ -73,6 +74,7 @@ All commands run from the repo root.
 | ------------------------------------ | ------------------------------------------------------------------------------------------------------- |
 | `npm run dev`                        | Starts both apps: Vite at http://localhost:5173 and the API at http://localhost:3000 (restarts on save) |
 | `npm test`                           | Every workspace's tests: client (Vitest + RTL) and server (Vitest + Supertest)                          |
+| `npm run seed`                       | Resets the database to the demo data and prints the demo logins                                         |
 | `npm run lint`                       | ESLint over the whole repo                                                                              |
 | `npm run build`                      | Production build into `client/dist`                                                                     |
 | `npm run preview --workspace client` | Serves `client/dist` at http://localhost:4173 to check the build                                        |
@@ -115,19 +117,23 @@ arrive in later videos) is in [docs/api-contract.md](docs/api-contract.md).
 | PUT    | /api/v1/me/favorites/:eventId       | Add a favorite (idempotent, 204). **Login**                                                                                                            |
 | DELETE | /api/v1/me/favorites/:eventId       | Remove a favorite (idempotent, 204). **Login**                                                                                                         |
 | GET    | /api/v1/me/clubs                    | Clubs I manage, for the dashboard. **Club admin / admin**                                                                                              |
+| GET    | /api/v1/admin/clubs                 | All clubs with their admin emails. **Admin**                                                                                                           |
+| POST   | /api/v1/clubs                       | Create a club `{ name, slug, description, adminEmails }` (409 if taken). **Admin**                                                                     |
+| PATCH  | /api/v1/clubs/:id                   | Edit a club; `adminEmails` replaces its admins (students are promoted). **Admin**                                                                      |
 
 No token or a bad token gives **401**; a valid token without permission gives **403**.
 
 ### Demo accounts (development only)
 
-`npm run seed --workspace server` creates these, all with the password `campushub-demo`.
+`npm run seed` creates these, all with the password `campushub-demo`, and prints them.
 Never use them in production.
 
-| Email                      | Role                          |
-| -------------------------- | ----------------------------- |
-| admin@campushub.dev        | admin                         |
-| code.lead@campushub.dev    | clubAdmin of Code Club        |
-| culture.lead@campushub.dev | clubAdmin of Cultural Society |
+| Email                      | Role                                                    |
+| -------------------------- | ------------------------------------------------------- |
+| admin@campushub.dev        | admin                                                   |
+| code.lead@campushub.dev    | clubAdmin of Code Club                                  |
+| culture.lead@campushub.dev | clubAdmin of Cultural Society                           |
+| aarav@campushub.dev        | student (also diya, ishaan, zara, rohan @campushub.dev) |
 
 Every error uses one shape:
 
@@ -183,6 +189,7 @@ API tests (Vitest + Supertest) live in `server/tests` and run with `npm test`.
 | 64    | `v64-crud-roles`           | Atomic register and cancel, club-admin dashboard (create/edit/delete events, registrant list), role-based nav, server favorites with guest merge                         |
 | 65    | `v65-uploads-realtime`     | Poster upload (multer, 2 MB, MIME + extension, storage adapter); Socket.IO room per event with a live seats badge and fetch fallback                                     |
 | 66    | `v66-caching-jobs`         | `Cache-Control` (public lists 60 s, personal no-store); reminder job every 15 min with a unit test; `toJSON` transforms strip secrets                                    |
+| 67    | `v67-campushub-v3`         | Full idempotent seed (3 clubs, 8 users, 24 events, registrations) with root `npm run seed`; `/admin` clubs and stats; `docs/e2e-checklist.md` (CampusHub v3)             |
 
 ## Stack (exact installed versions)
 
