@@ -195,6 +195,7 @@ API tests (Vitest + Supertest) live in `server/tests` and run with `npm test`; f
 | 67    | `v67-campushub-v3`         | Full idempotent seed (3 clubs, 8 users, 24 events, registrations) with root `npm run seed`; `/admin` clubs and stats; `docs/e2e-checklist.md` (CampusHub v3)                                 |
 | 68    | `v68-testing`              | Integration tests for a full login session and registering (full, duplicate, deadline, last-seat race with exactly one winner); Playwright E2E: log in, register, see it in My registrations |
 | 69    | `v69-security`             | `sanitize` middleware strips `# CampusHub                                                                                                                                                    |
+| 70    | `v70-collaboration`        | `.github/pull_request_template.md` and `docs/review-checklist.md` (docs only)                                                                                                                |
 
 CampusHub is a campus events hub: students discover events and clubs, register, and get
 reminders, while club admins publish and manage events. It is the reference app for the
@@ -389,6 +390,11 @@ API tests (Vitest + Supertest) live in `server/tests` and run with `npm test`; f
 | 66                                                                                                                 | `v66-caching-jobs`         | `Cache-Control` (public lists 60 s, personal no-store); reminder job every 15 min with a unit test; `toJSON` transforms strip secrets                                    |
 | 67                                                                                                                 | `v67-campushub-v3`         | Full idempotent seed (3 clubs, 8 users, 24 events, registrations) with root `npm run seed`; `/admin` clubs and stats; `docs/e2e-checklist.md` (CampusHub v3)             |
 | /dotted keys; ownership tests for every event-id route; global rate limit 300 per 15 min per IP; `npm audit` clean |
+
+## Working together
+
+Open small pull requests that fill in [the PR template](.github/pull_request_template.md), and
+review each other's with [docs/review-checklist.md](docs/review-checklist.md).
 
 ## Stack (exact installed versions)
 
