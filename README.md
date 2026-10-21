@@ -196,6 +196,7 @@ API tests (Vitest + Supertest) live in `server/tests` and run with `npm test`; f
 | 68    | `v68-testing`              | Integration tests for a full login session and registering (full, duplicate, deadline, last-seat race with exactly one winner); Playwright E2E: log in, register, see it in My registrations |
 | 69    | `v69-security`             | `sanitize` middleware strips `# CampusHub                                                                                                                                                    |
 | 70    | `v70-collaboration`        | `.github/pull_request_template.md` and `docs/review-checklist.md` (docs only)                                                                                                                |
+| 71    | `v71-verify-ai`            | `docs/ai-code-review.md`: protocol for checking AI-written code, red flags, and a reusable review prompt (docs only)                                                                         |
 
 CampusHub is a campus events hub: students discover events and clubs, register, and get
 reminders, while club admins publish and manage events. It is the reference app for the
@@ -394,7 +395,8 @@ API tests (Vitest + Supertest) live in `server/tests` and run with `npm test`; f
 ## Working together
 
 Open small pull requests that fill in [the PR template](.github/pull_request_template.md), and
-review each other's with [docs/review-checklist.md](docs/review-checklist.md).
+review each other's with [docs/review-checklist.md](docs/review-checklist.md). When AI helped,
+follow [docs/ai-code-review.md](docs/ai-code-review.md) before you ask for a review.
 
 ## Stack (exact installed versions)
 
