@@ -35,13 +35,16 @@ export function AuthProvider({ children }) {
   const register = (name, email, password) =>
     startSession('/auth/register', { name, email, password });
 
+  // Logging out reloads the app on a clean login page instead of clearing the user in React.
+  // Clearing it would make ProtectedRoute remember the current page and send the next person
+  // who logs in on this device there; the reload also wipes everything held in memory.
   async function logout() {
     try {
       await apiFetch('/auth/logout', { method: 'POST' });
     } finally {
-      // Forget the user locally even if the request failed.
       setAccessToken(null);
-      setUser(null);
+      window.history.replaceState(null, '', '/login');
+      window.location.reload();
     }
   }
 

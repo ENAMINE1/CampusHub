@@ -5,6 +5,7 @@ import { apiFetch } from '../../api/client.js';
 import EventForm from '../../components/EventForm.jsx';
 import PosterUpload from '../../components/PosterUpload.jsx';
 import Spinner from '../../components/ui/Spinner.jsx';
+import PageHeader from '../../components/ui/PageHeader.jsx';
 import ErrorState from '../../components/ui/ErrorState.jsx';
 import { emptyEventForm, toFormValues } from '../../features/events/eventFormValues.js';
 
@@ -30,9 +31,11 @@ export default function EventFormPage() {
 
   return (
     <>
-      <h1 className="mb-6 text-3xl font-bold text-slate-900 dark:text-slate-100">
-        {id ? 'Edit event' : 'New event'}
-      </h1>
+      <PageHeader
+        eyebrow="Dashboard"
+        title={id ? 'Edit event' : 'New event'}
+        description="Times are in your local time zone. Students see changes straight away."
+      />
       <EventForm
         initialValues={id ? toFormValues(existing.data) : emptyEventForm}
         clubs={clubs.data}

@@ -1,4 +1,5 @@
 // Heart toggle for one event. It reads favorites from Context, so no parent has to pass them down.
+import { Heart } from 'lucide-react';
 import { useFavorites } from '../context/FavoritesContext.jsx';
 
 export default function FavoriteButton({ eventId, title }) {
@@ -11,9 +12,12 @@ export default function FavoriteButton({ eventId, title }) {
       onClick={() => toggleFavorite(eventId)}
       aria-pressed={pressed}
       aria-label={`Favorite ${title}`}
-      className="rounded-full p-1 text-xl leading-none text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950"
+      className="grid size-9 place-items-center rounded-full text-rose-600 transition hover:bg-rose-50 active:scale-90 dark:text-rose-400 dark:hover:bg-rose-500/15"
     >
-      {pressed ? '♥' : '♡'}
+      <Heart
+        className={`size-[18px] transition-transform ${pressed ? 'scale-110 fill-current' : ''}`}
+        aria-hidden="true"
+      />
     </button>
   );
 }

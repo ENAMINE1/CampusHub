@@ -87,6 +87,21 @@ browser, so without this rule a refresh on `/events/evt-101` would return a 404 
 On Vercel, set the project root to `client/`; the build command is `npm run build` and the
 output directory is `dist`.
 
+## Front end
+
+- **Sign-in first.** A signed-out visitor only ever sees `/login` and `/register`; every other
+  URL redirects to `/login` and comes back after logging in. (SPEC.md lists Home and Events as
+  public; this was changed on request so no campus information shows before login.)
+- **Design tokens** live in `client/src/index.css`: one indigo accent scale (`brand-*`), plus
+  surface and text tokens (`bg-canvas`, `bg-surface`, `border-line`, `text-ink`,
+  `text-ink-muted`) that switch values in dark mode, so components need no `dark:` pairs for them.
+- **Reusable UI** is in `client/src/components/ui` (Button with loading state, Card, Badge, Input,
+  Select, Textarea, Modal, PageHeader, SectionHeader, skeletons, empty and error states).
+  `buttonStyles.js` gives links the same look as buttons.
+- **Icons** come from one library, `lucide-react`.
+- **Motion** is short and subtle (entrance fade-up, hover lift) and switched off entirely when the
+  operating system asks for reduced motion.
+
 ## API
 
 The Express API lives in `server/` and listens on http://localhost:3000. In development the React
@@ -435,4 +450,5 @@ follow [docs/ai-code-review.md](docs/ai-code-review.md) before you ask for a rev
 | socket.io, socket.io-client      | 4.8.4   |
 | node-cron                        | 4.6.0   |
 | nodemailer                       | 10.1.7  |
+| lucide-react                     | 1.52.0  |
 | @playwright/test                 | 1.64.1  |

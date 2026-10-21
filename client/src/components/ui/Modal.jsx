@@ -2,6 +2,7 @@
 // showModal() makes the rest of the page inert, so Tab stays inside the dialog (the focus trap),
 // Esc closes it, and the browser returns focus to the button that opened it.
 import { useEffect, useRef } from 'react';
+import { X } from 'lucide-react';
 
 export default function Modal({ open, title, onClose, children }) {
   const dialogRef = useRef(null);
@@ -18,15 +19,22 @@ export default function Modal({ open, title, onClose, children }) {
       ref={dialogRef}
       onClose={onClose}
       aria-labelledby="modal-title"
-      className="m-auto w-full max-w-md rounded-xl bg-white dark:bg-slate-800 p-6 shadow-xl backdrop:bg-slate-900/60"
+      className="m-auto w-[calc(100%-2rem)] max-w-md rounded-2xl border border-line bg-surface p-6 text-ink shadow-lift backdrop:bg-slate-950/50 backdrop:backdrop-blur-sm open:animate-rise"
     >
-      <h2
-        id="modal-title"
-        className="text-xl font-bold text-slate-900 dark:text-slate-100"
-      >
-        {title}
-      </h2>
-      <div className="mt-3 text-slate-700 dark:text-slate-300">{children}</div>
+      <div className="flex items-start justify-between gap-4">
+        <h2 id="modal-title" className="text-lg font-semibold">
+          {title}
+        </h2>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close"
+          className="-m-1 rounded-lg p-1 text-ink-muted transition hover:bg-surface-muted hover:text-ink"
+        >
+          <X className="size-5" aria-hidden="true" />
+        </button>
+      </div>
+      <div className="mt-3 text-sm text-ink-muted">{children}</div>
     </dialog>
   );
 }

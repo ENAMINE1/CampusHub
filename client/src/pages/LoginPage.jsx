@@ -7,16 +7,15 @@ export default function LoginPage() {
 
   return (
     <>
-      <h1 className="mb-6 text-3xl font-bold text-slate-900 dark:text-slate-100">
-        Log in
-      </h1>
+      <h1 className="text-3xl font-bold">Welcome back</h1>
+      <p className="mt-2 mb-8 text-ink-muted">Log in to see what is on this week.</p>
       <LoginForm />
-      <p className="mt-6 text-slate-700 dark:text-slate-300">
+      <p className="mt-8 text-center text-sm text-ink-muted">
         New here? {/* Pass the return path along, so signing up also sends you back. */}
         <Link
           to="/register"
           state={location.state}
-          className="font-semibold text-brand-700 underline dark:text-brand-300"
+          className="font-semibold text-brand-600 hover:underline dark:text-brand-300"
         >
           Create an account
         </Link>

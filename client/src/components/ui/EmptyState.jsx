@@ -1,8 +1,15 @@
-// Friendly message shown when a list has no items.
-export default function EmptyState({ message }) {
+// Friendly placeholder for a list with no items, with an optional action (a link or button).
+import { Inbox } from 'lucide-react';
+
+export default function EmptyState({ message, title, icon: Icon = Inbox, action }) {
   return (
-    <div className="rounded-xl border border-dashed border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-8 text-center">
-      <p className="text-slate-600 dark:text-slate-400">{message}</p>
+    <div className="flex flex-col items-center rounded-2xl border border-dashed border-line bg-surface/60 px-6 py-12 text-center">
+      <span className="mb-4 grid size-12 place-items-center rounded-2xl bg-surface-muted text-ink-muted">
+        <Icon className="size-6" aria-hidden="true" />
+      </span>
+      {title && <p className="font-semibold text-ink">{title}</p>}
+      <p className="mt-1 max-w-sm text-sm text-ink-muted">{message}</p>
+      {action && <div className="mt-5">{action}</div>}
     </div>
   );
 }

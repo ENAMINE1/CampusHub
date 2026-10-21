@@ -1,9 +1,11 @@
-// Home page: a short welcome and the next three events.
-import { Link } from 'react-router';
+// Home page: a hero with the main call to action, the next three events and featured clubs.
 import EventList from '../components/EventList.jsx';
+import FeaturedClubs from '../components/FeaturedClubs.jsx';
+import HomeHero from '../components/HomeHero.jsx';
 import useFetch from '../hooks/useFetch.js';
-import Spinner from '../components/ui/Spinner.jsx';
+import CardGridSkeleton from '../components/ui/CardGridSkeleton.jsx';
 import ErrorState from '../components/ui/ErrorState.jsx';
+import SectionHeader from '../components/ui/SectionHeader.jsx';
 
 export default function HomePage() {
   // Ask the server for exactly what we show: the next three upcoming events.
@@ -11,26 +13,25 @@ export default function HomePage() {
 
   return (
     <>
-      <section className="mb-10 rounded-2xl bg-brand-50 dark:bg-slate-800 p-8">
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
-          What's happening on campus
-        </h1>
-        <p className="mt-2 text-slate-700 dark:text-slate-300">
-          Find events, join clubs and never miss a thing.
-        </p>
-        <Link
-          to="/events"
-          className="mt-4 inline-block rounded-lg bg-brand-700 px-4 py-2 font-semibold text-white hover:bg-brand-600"
-        >
-          Browse all events
-        </Link>
+      <HomeHero />
+      <section aria-labelledby="upcoming" className="mb-16">
+        <SectionHeader
+          id="upcoming"
+          title="Coming up next"
+          linkTo="/events"
+          linkLabel="View all"
+        />
+        {isLoading && <CardGridSkeleton count={3} label="Loading events…" />}
+        {error && <ErrorState message={error} />}
+        {data && (
+          <EventList
+            events={data.data}
+            headingAs="h3"
+            emptyMessage="No upcoming events yet."
+          />
+        )}
       </section>
-      <h2 className="mb-4 text-2xl font-bold text-slate-900 dark:text-slate-100">
-        Coming up next
-      </h2>
-      {isLoading && <Spinner label="Loading events…" />}
-      {error && <ErrorState message={error} />}
-      {data && <EventList events={data.data} />}
+      <FeaturedClubs />
     </>
   );
 }

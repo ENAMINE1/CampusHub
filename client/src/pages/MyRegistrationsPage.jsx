@@ -1,13 +1,19 @@
 // My Registrations (SPEC.md FR-3.4): the student's events, split into upcoming and past.
 import { useState } from 'react';
 import { Link } from 'react-router';
-import Card from '../components/ui/Card.jsx';
-import Button from '../components/ui/Button.jsx';
+import { Ticket } from 'lucide-react';
+import RegistrationRow from '../components/RegistrationRow.jsx';
+import PageHeader from '../components/ui/PageHeader.jsx';
 import EmptyState from '../components/ui/EmptyState.jsx';
 import ErrorState from '../components/ui/ErrorState.jsx';
 import Spinner from '../components/ui/Spinner.jsx';
+import buttonStyles from '../components/ui/buttonStyles.js';
 import { useRegistrations } from '../context/RegistrationsContext.jsx';
-import formatDate from '../utils/formatDate.js';
+
+const tabClass = (isActive) =>
+  `rounded-lg px-4 py-1.5 text-sm font-semibold capitalize transition ${
+    isActive ? 'bg-surface text-ink shadow-card' : 'text-ink-muted hover:text-ink'
+  }`;
 
 export default function MyRegistrationsPage() {
   const { registrations, isLoading, error } = useRegistrations();
@@ -21,41 +27,45 @@ export default function MyRegistrationsPage() {
 
   return (
     <>
-      <h1 className="mb-6 text-3xl font-bold text-slate-900 dark:text-slate-100">
-        My registrations
-      </h1>
-      <div className="mb-6 flex gap-2" role="group" aria-label="Which registrations">
+      <PageHeader
+        eyebrow="Your plans"
+        title="My registrations"
+        description="Every event you have a seat for."
+      />
+      <div
+        className="mb-6 inline-flex gap-1 rounded-xl border border-line bg-surface-muted p-1"
+        role="group"
+        aria-label="Which registrations"
+      >
         {['upcoming', 'past'].map((name) => (
-          <Button
+          <button
             key={name}
-            variant={tab === name ? 'primary' : 'secondary'}
+            type="button"
             aria-pressed={tab === name}
             onClick={() => setTab(name)}
-            className="capitalize"
+            className={tabClass(tab === name)}
           >
             {name}
-          </Button>
+          </button>
         ))}
       </div>
       {isLoading && <Spinner label="Loading your registrations…" />}
       {error && <ErrorState message={error} />}
       {!isLoading && !error && shown.length === 0 && (
-        <EmptyState message={`No ${tab} registrations.`} />
+        <EmptyState
+          icon={Ticket}
+          message={`No ${tab} registrations.`}
+          action={
+            <Link to="/events" className={buttonStyles({ variant: 'secondary' })}>
+              Find an event
+            </Link>
+          }
+        />
       )}
       <ul className="space-y-3">
         {shown.map((r) => (
-          <li key={r.eventId}>
-            <Card>
-              <Link
-                to={`/events/${r.eventId}`}
-                className="font-semibold text-slate-900 hover:underline dark:text-slate-100"
-              >
-                {r.title}
-              </Link>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                {formatDate(r.startsAt)} · {r.venue}
-              </p>
-            </Card>
+          <li key={r.eventId} className="animate-rise">
+            <RegistrationRow registration={r} />
           </li>
         ))}
       </ul>

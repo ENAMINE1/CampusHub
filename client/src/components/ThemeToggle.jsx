@@ -1,19 +1,23 @@
-// Button in the header that switches between light and dark mode.
+// Icon button that switches between light and dark mode.
+import { Moon, Sun } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext.jsx';
+import buttonStyles from './ui/buttonStyles.js';
 
 export default function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
   const isDark = theme === 'dark';
+  const Icon = isDark ? Sun : Moon;
 
   return (
     <button
       type="button"
       onClick={toggleTheme}
       aria-pressed={isDark}
-      className="rounded px-2 py-1 text-sm font-medium hover:bg-white/20"
+      aria-label="Dark mode"
+      title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+      className={buttonStyles({ variant: 'ghost', size: 'icon' })}
     >
-      {isDark ? '☀ Light' : '☾ Dark'}
-      <span className="sr-only"> mode</span>
+      <Icon aria-hidden="true" />
     </button>
   );
 }

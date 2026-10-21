@@ -1,21 +1,98 @@
-/* Global styles. Tailwind 4 needs only this import: no tailwind.config.js, no PostCSS file. */
+/* Global styles and design tokens. Tailwind 4 needs only this import: no tailwind.config.js. */
 @import 'tailwindcss';
 
 /* dark: classes apply when <html> has the "dark" class, which ThemeContext toggles. */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Brand colour tokens. Each one becomes classes like bg-brand-700 and text-brand-700. */
-@theme {
-  --color-brand-50: oklch(0.97 0.02 275);
-  --color-brand-300: oklch(0.78 0.11 277);
-  --color-brand-600: oklch(0.51 0.23 277);
-  --color-brand-700: oklch(0.46 0.21 277);
-}
-
-/* Tell the browser which theme we are in, so native controls and scrollbars match. */
+/* Surface and text colours switch with the theme, so components write bg-surface once instead
+   of a light and a dark class. Values live in :root / .dark below. */
 :root {
   color-scheme: light;
+  --canvas: oklch(0.985 0.003 275);
+  --surface: oklch(1 0 0);
+  --surface-muted: oklch(0.965 0.006 275);
+  --line: oklch(0.915 0.008 275);
+  --ink: oklch(0.22 0.025 275);
+  --ink-muted: oklch(0.46 0.025 275);
 }
 .dark {
   color-scheme: dark;
+  --canvas: oklch(0.16 0.014 275);
+  --surface: oklch(0.205 0.017 275);
+  --surface-muted: oklch(0.25 0.02 275);
+  --line: oklch(0.3 0.02 275);
+  --ink: oklch(0.96 0.006 275);
+  --ink-muted: oklch(0.74 0.016 275);
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+}
+
+/* One accent colour (indigo). Each step becomes classes like bg-brand-600 and text-brand-700. */
+@theme {
+  --color-brand-50: oklch(0.97 0.02 275);
+  --color-brand-100: oklch(0.94 0.04 276);
+  --color-brand-300: oklch(0.78 0.11 277);
+  --color-brand-400: oklch(0.68 0.17 277);
+  --color-brand-500: oklch(0.58 0.21 277);
+  --color-brand-600: oklch(0.51 0.23 277);
+  --color-brand-700: oklch(0.46 0.21 277);
+
+  --font-sans:
+    'Inter', 'Segoe UI Variable Text', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-display:
+    'Inter Display', 'Segoe UI Variable Display', 'Segoe UI', system-ui, sans-serif;
+
+  --shadow-card:
+    0 1px 2px oklch(0.2 0.03 275 / 0.05), 0 1px 3px oklch(0.2 0.03 275 / 0.07);
+  --shadow-lift: 0 18px 40px -18px oklch(0.25 0.08 275 / 0.35);
+
+  --animate-rise: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-fade: fade 0.2s ease-out both;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-canvas font-sans text-ink antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-tight text-balance;
+  }
+  /* One focus ring everywhere, shown only for keyboard users. */
+  :focus-visible {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
+  }
+}
+
+/* Someone who asked their OS for less motion gets none: no entrance animations, no slides. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

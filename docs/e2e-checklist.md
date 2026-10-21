@@ -5,14 +5,17 @@ whole app the way real users do. Video 68 automates the student path with Playwr
 
 Demo password for every account: `campushub-demo` (development only).
 
-## Guest
+## Guest (signed out)
 
-- [ ] `/events` lists events; search, category, sort and pagination change the URL and the list.
-- [ ] A full event shows "Full"; a past event cannot be registered for.
-- [ ] Opening `/me/registrations`, `/dashboard` or `/admin` redirects to `/login`.
+- [ ] Opening `/`, `/events`, `/clubs` or any other page redirects to `/login`: no campus data
+      is visible before logging in. Only `/login` and `/register` render.
+- [ ] After logging in you land on the page you first asked for.
+- [ ] Logging out lands on a clean `/login`; the next login goes to Home, not the last user's page.
 
 ## Student (`aarav@campushub.dev`)
 
+- [ ] `/events` lists events; search, category, sort and pagination change the URL and the list.
+- [ ] A full event shows "Full"; a past event is marked "Past" and cannot be registered for.
 - [ ] Log in; the header greets you and shows "My registrations".
 - [ ] Register for an upcoming event with free seats; the seats badge drops by one.
 - [ ] In a second window, the same event's seats badge updates live.
@@ -39,3 +42,4 @@ Demo password for every account: `campushub-demo` (development only).
 
 - [ ] No console errors. Works at 360, 768 and 1280 px, in light and dark mode.
 - [ ] Everything is reachable with the keyboard alone, with a visible focus ring.
+- [ ] With "reduce motion" turned on in the OS, nothing animates.

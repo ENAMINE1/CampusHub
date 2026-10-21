@@ -1,6 +1,7 @@
 // Poster picker for the edit page. Checks type and size in the browser for quick feedback; the
 // server checks again, because anything in the browser can be bypassed.
 import { useState } from 'react';
+import { ImageUp } from 'lucide-react';
 import { apiFetch, assetUrl } from '../api/client.js';
 
 const TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -35,35 +36,42 @@ export default function PosterUpload({ eventId, posterUrl }) {
   }
 
   return (
-    <section className="mt-10 max-w-2xl" aria-labelledby="poster-heading">
-      <h2
-        id="poster-heading"
-        className="mb-3 text-xl font-bold text-slate-900 dark:text-slate-100"
-      >
+    <section
+      className="mt-8 max-w-3xl rounded-2xl border border-line bg-surface p-6 shadow-card sm:p-8"
+      aria-labelledby="poster-heading"
+    >
+      <h2 id="poster-heading" className="mb-4 text-xl font-bold">
         Poster
       </h2>
       {url && (
         <img
           src={assetUrl(url)}
           alt="Current poster"
-          className="mb-3 max-h-60 rounded-lg"
+          className="mb-4 max-h-60 rounded-xl border border-line"
         />
       )}
       <label
         htmlFor="poster-file"
-        className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
+        className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed border-line px-6 py-8 text-center text-sm text-ink-muted transition hover:border-brand-400 hover:bg-surface-muted focus-within:border-brand-500"
       >
-        Upload a JPEG, PNG or WebP (max 2 MB)
+        <ImageUp className="size-6 text-brand-500" aria-hidden="true" />
+        <span>
+          <span className="font-semibold text-ink">Choose an image</span> (JPEG, PNG or
+          WebP, max 2 MB)
+        </span>
+        <input
+          id="poster-file"
+          type="file"
+          accept=".jpg,.jpeg,.png,.webp"
+          onChange={handleChange}
+          aria-describedby={error ? 'poster-error' : undefined}
+          className="sr-only"
+        />
       </label>
-      <input
-        id="poster-file"
-        type="file"
-        accept=".jpg,.jpeg,.png,.webp"
-        onChange={handleChange}
-        aria-describedby={error ? 'poster-error' : undefined}
-        className="block text-sm text-slate-700 dark:text-slate-300"
-      />
-      <p role="status" className="mt-2 text-sm text-green-800 dark:text-green-300">
+      <p
+        role="status"
+        className="mt-3 text-sm font-medium text-emerald-700 dark:text-emerald-300"
+      >
         {status}
       </p>
       {error && (

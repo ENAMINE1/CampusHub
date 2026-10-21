@@ -5,6 +5,8 @@ import Input from './ui/Input.jsx';
 import Select from './ui/Select.jsx';
 import Textarea from './ui/Textarea.jsx';
 import Button from './ui/Button.jsx';
+import ErrorState from './ui/ErrorState.jsx';
+import FieldError from './ui/FieldError.jsx';
 import categories from '../data/categories.js';
 import { toRequestBody } from '../features/events/eventFormValues.js';
 
@@ -51,7 +53,11 @@ export default function EventForm({ initialValues, clubs, submitLabel, onSubmit 
   );
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="max-w-2xl space-y-4">
+    <form
+      onSubmit={handleSubmit}
+      noValidate
+      className="max-w-3xl space-y-5 rounded-2xl border border-line bg-surface p-6 shadow-card sm:p-8"
+    >
       {field('title', 'Title')}
       <Textarea
         id="event-description"
@@ -97,15 +103,9 @@ export default function EventForm({ initialValues, clubs, submitLabel, onSubmit 
           type: 'datetime-local',
         })}
       </div>
-      {errors.club && (
-        <p className="text-sm text-red-700 dark:text-red-300">{errors.club}</p>
-      )}
-      {formError && (
-        <p role="alert" className="text-red-700 dark:text-red-300">
-          {formError}
-        </p>
-      )}
-      <Button type="submit" disabled={isSaving}>
+      <FieldError id="event-club-error">{errors.club}</FieldError>
+      {formError && <ErrorState title="Could not save the event" message={formError} />}
+      <Button type="submit" isLoading={isSaving}>
         {isSaving ? 'Saving…' : submitLabel}
       </Button>
     </form>

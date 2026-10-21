@@ -1,83 +1,52 @@
 // One club's events on the dashboard, with registrant counts and edit / registrants / delete
 // actions. Deleting asks for confirmation first, because it also removes every registration.
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { CalendarPlus } from 'lucide-react';
 import useFetch from '../hooks/useFetch.js';
 import { apiFetch } from '../api/client.js';
+import ClubEventRow from './ClubEventRow.jsx';
 import Button from './ui/Button.jsx';
 import Modal from './ui/Modal.jsx';
 import Spinner from './ui/Spinner.jsx';
 import ErrorState from './ui/ErrorState.jsx';
 import EmptyState from './ui/EmptyState.jsx';
-import formatDate from '../utils/formatDate.js';
-
-const actionLink = 'font-semibold text-brand-700 underline dark:text-brand-300';
 
 export default function ClubEventsTable({ club }) {
   // 50 is the API's maximum page size, plenty for one club's dashboard.
   const { data, isLoading, error, reload } = useFetch(`/events?club=${club.id}&limit=50`);
   const [toDelete, setToDelete] = useState(null);
   const [deleteError, setDeleteError] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
 
   async function confirmDelete() {
+    setIsDeleting(true);
     try {
       await apiFetch(`/events/${toDelete.id}`, { method: 'DELETE' });
       reload();
     } catch (err) {
       setDeleteError(err.message);
     }
+    setIsDeleting(false);
     setToDelete(null);
   }
 
   return (
-    <section className="mb-10" aria-labelledby={`club-${club.id}`}>
-      <h2
-        id={`club-${club.id}`}
-        className="mb-3 text-xl font-bold text-slate-900 dark:text-slate-100"
-      >
-        {club.name}
-      </h2>
+    <section className="mb-12 animate-rise" aria-labelledby={`club-${club.id}`}>
+      <div className="mb-4 flex items-baseline justify-between gap-3">
+        <h2 id={`club-${club.id}`} className="text-xl font-bold">
+          {club.name}
+        </h2>
+        {data && <p className="text-sm text-ink-muted">{data.total} events</p>}
+      </div>
       {isLoading && <Spinner label="Loading events…" />}
       {(error || deleteError) && <ErrorState message={error || deleteError} />}
-      {data?.data.length === 0 && <EmptyState message="This club has no events yet." />}
+      {data?.data.length === 0 && (
+        <EmptyState icon={CalendarPlus} message="This club has no events yet." />
+      )}
       {data?.data.length > 0 && (
-        <ul className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white dark:divide-slate-700 dark:border-slate-700 dark:bg-slate-800">
+        <ul className="divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface shadow-card">
           {data.data.map((event) => (
-            <li
-              key={event.id}
-              className="flex flex-wrap items-center justify-between gap-3 p-4"
-            >
-              <div>
-                <Link
-                  to={`/events/${event.id}`}
-                  className="font-semibold text-slate-900 hover:underline dark:text-slate-100"
-                >
-                  {event.title}
-                </Link>
-                <p className="text-sm text-slate-600 dark:text-slate-400">
-                  {formatDate(event.startsAt)} · {event.seatsTaken} of {event.capacity}{' '}
-                  registered
-                </p>
-              </div>
-              <div className="flex gap-3 text-sm">
-                <Link to={`/dashboard/events/${event.id}/edit`} className={actionLink}>
-                  Edit
-                </Link>
-                <Link
-                  to={`/dashboard/events/${event.id}/registrations`}
-                  className={actionLink}
-                >
-                  Registrants
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => setToDelete(event)}
-                  className="font-semibold text-red-700 underline dark:text-red-300"
-                >
-                  Delete
-                </button>
-              </div>
-            </li>
+            <ClubEventRow key={event.id} event={event} onDelete={setToDelete} />
           ))}
         </ul>
       )}
@@ -94,7 +63,7 @@ export default function ClubEventsTable({ club }) {
           <Button variant="secondary" onClick={() => setToDelete(null)}>
             Keep it
           </Button>
-          <Button variant="danger" onClick={confirmDelete}>
+          <Button variant="danger" isLoading={isDeleting} onClick={confirmDelete}>
             Delete event
           </Button>
         </div>

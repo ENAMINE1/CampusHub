@@ -1,16 +1,15 @@
 // Event details page for /events/:id. The id comes from the URL.
+// Wide screens get two columns: the story on the left, a sticky "reserve a seat" panel on the right.
 import { Link, useParams } from 'react-router';
+import { ArrowLeft } from 'lucide-react';
 import useFetch from '../hooks/useFetch.js';
+import useSocketSeats from '../hooks/useSocketSeats.js';
 import Spinner from '../components/ui/Spinner.jsx';
 import ErrorState from '../components/ui/ErrorState.jsx';
-import Card from '../components/ui/Card.jsx';
 import Badge from '../components/ui/Badge.jsx';
-import RegisterForEvent from '../components/RegisterForEvent.jsx';
-import SeatsBadge from '../components/SeatsBadge.jsx';
-import useSocketSeats from '../hooks/useSocketSeats.js';
-import FavoriteButton from '../components/FavoriteButton.jsx';
-import formatDate from '../utils/formatDate.js';
-import { assetUrl } from '../api/client.js';
+import EventCover from '../components/EventCover.jsx';
+import EventFacts from '../components/EventFacts.jsx';
+import ReservePanel from '../components/ReservePanel.jsx';
 
 export default function EventDetailsPage() {
   const { id } = useParams();
@@ -25,60 +24,38 @@ export default function EventDetailsPage() {
   if (!event) return <Spinner label="Loading event…" />;
 
   return (
-    <Card className="p-8">
-      {event.posterUrl && (
-        <img
-          src={assetUrl(event.posterUrl)}
-          alt={`Poster for ${event.title}`}
-          className="mb-6 max-h-96 w-full rounded-lg object-cover"
-        />
-      )}
+    <div className="animate-rise">
       <Link
         to="/events"
-        className="text-sm font-semibold text-brand-700 dark:text-brand-300 underline"
+        className="group mb-6 inline-flex items-center gap-1.5 text-sm font-semibold text-ink-muted hover:text-ink"
       >
-        ← All events
+        <ArrowLeft
+          className="size-4 transition group-hover:-translate-x-0.5"
+          aria-hidden="true"
+        />
+        All events
       </Link>
-      <div className="mt-4 flex items-center gap-2">
-        <Badge>{event.category}</Badge>
-        <span className="text-sm text-slate-600 dark:text-slate-400">
-          {event.club.name}
-        </span>
-        <span className="ml-auto">
-          <FavoriteButton eventId={event.id} title={event.title} />
-        </span>
+      <div className="grid gap-8 lg:grid-cols-[1fr_22rem]">
+        <article className="min-w-0">
+          <EventCover
+            event={event}
+            eager
+            className="mb-8 aspect-[21/9] rounded-3xl border border-line"
+          />
+          <div className="mb-3 flex flex-wrap items-center gap-2">
+            <Badge>{event.category}</Badge>
+            <span className="text-sm font-medium text-ink-muted">{event.club.name}</span>
+          </div>
+          <h1 className="text-3xl font-bold sm:text-4xl">{event.title}</h1>
+          <p className="mt-4 text-lg leading-relaxed whitespace-pre-line text-ink-muted">
+            {event.description}
+          </p>
+          <EventFacts event={event} />
+        </article>
+        <aside className="lg:sticky lg:top-24 lg:self-start">
+          <ReservePanel event={event} live={live} onChange={reload} />
+        </aside>
       </div>
-      <h1 className="mt-2 text-3xl font-bold text-slate-900 dark:text-slate-100">
-        {event.title}
-      </h1>
-      <p className="mt-4 text-slate-700 dark:text-slate-300">{event.description}</p>
-      <dl className="mt-6 grid gap-3 text-slate-800 dark:text-slate-200 sm:grid-cols-2">
-        <div>
-          <dt className="font-semibold">Starts</dt>
-          <dd>{formatDate(event.startsAt)}</dd>
-        </div>
-        <div>
-          <dt className="font-semibold">Ends</dt>
-          <dd>{formatDate(event.endsAt)}</dd>
-        </div>
-        <div>
-          <dt className="font-semibold">Venue</dt>
-          <dd>{event.venue}</dd>
-        </div>
-        <div>
-          <dt className="font-semibold">Register by</dt>
-          <dd>{formatDate(event.registrationDeadline)}</dd>
-        </div>
-      </dl>
-      <SeatsBadge
-        seatsLeft={live.seatsLeft}
-        capacity={event.capacity}
-        isLive={live.isConnected}
-      />
-      <RegisterForEvent
-        event={{ ...event, seatsLeft: live.seatsLeft }}
-        onChange={reload}
-      />
-    </Card>
+    </div>
   );
 }

@@ -1,7 +1,10 @@
-// Route table: which page component renders for which URL. Layout wraps every page.
+// Route table: which page component renders for which URL.
+// Signed-out visitors only ever reach /login and /register (AuthLayout); every other page sits
+// inside the signed-in Layout behind ProtectedRoute.
 import { lazy } from 'react';
 import { Route, Routes } from 'react-router';
 import Layout from './pages/Layout.jsx';
+import AuthLayout from './pages/AuthLayout.jsx';
 import HomePage from './pages/HomePage.jsx';
 import EventsPage from './pages/EventsPage.jsx';
 import EventDetailsPage from './pages/EventDetailsPage.jsx';
@@ -20,55 +23,47 @@ const RegistrantsPage = lazy(() => import('./pages/dashboard/RegistrantsPage.jsx
 const AdminPage = lazy(() => import('./pages/admin/AdminPage.jsx'));
 
 const STAFF = ['clubAdmin', 'admin'];
-const staffOnly = (page) => <ProtectedRoute roles={STAFF}>{page}</ProtectedRoute>;
+const only = (roles, page) => <ProtectedRoute roles={roles}>{page}</ProtectedRoute>;
 
 export default function App() {
   return (
     <Routes>
-      <Route element={<Layout />}>
+      <Route
+        element={
+          <GuestOnly>
+            <AuthLayout />
+          </GuestOnly>
+        }
+      >
+        <Route path="login" element={<LoginPage />} />
+        <Route path="register" element={<RegisterPage />} />
+      </Route>
+      <Route
+        element={
+          <ProtectedRoute>
+            <Layout />
+          </ProtectedRoute>
+        }
+      >
         <Route index element={<HomePage />} />
         <Route path="events" element={<EventsPage />} />
         <Route path="events/:id" element={<EventDetailsPage />} />
         <Route path="clubs" element={<ClubsPage />} />
         <Route
-          path="login"
-          element={
-            <GuestOnly>
-              <LoginPage />
-            </GuestOnly>
-          }
-        />
-        <Route
-          path="register"
-          element={
-            <GuestOnly>
-              <RegisterPage />
-            </GuestOnly>
-          }
-        />
-        <Route
           path="me/registrations"
-          element={
-            <ProtectedRoute roles={['student']}>
-              <MyRegistrationsPage />
-            </ProtectedRoute>
-          }
+          element={only(['student'], <MyRegistrationsPage />)}
         />
-        <Route path="dashboard" element={staffOnly(<DashboardPage />)} />
-        <Route path="dashboard/events/new" element={staffOnly(<EventFormPage />)} />
-        <Route path="dashboard/events/:id/edit" element={staffOnly(<EventFormPage />)} />
+        <Route path="dashboard" element={only(STAFF, <DashboardPage />)} />
+        <Route path="dashboard/events/new" element={only(STAFF, <EventFormPage />)} />
+        <Route
+          path="dashboard/events/:id/edit"
+          element={only(STAFF, <EventFormPage />)}
+        />
         <Route
           path="dashboard/events/:id/registrations"
-          element={staffOnly(<RegistrantsPage />)}
+          element={only(STAFF, <RegistrantsPage />)}
         />
-        <Route
-          path="admin"
-          element={
-            <ProtectedRoute roles={['admin']}>
-              <AdminPage />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="admin" element={only(['admin'], <AdminPage />)} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

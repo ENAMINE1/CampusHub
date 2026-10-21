@@ -5,7 +5,8 @@ import { useSearchParams } from 'react-router';
 import EventFilters from '../components/EventFilters.jsx';
 import EventList from '../components/EventList.jsx';
 import Pagination from '../components/ui/Pagination.jsx';
-import Spinner from '../components/ui/Spinner.jsx';
+import CardGridSkeleton from '../components/ui/CardGridSkeleton.jsx';
+import PageHeader from '../components/ui/PageHeader.jsx';
 import ErrorState from '../components/ui/ErrorState.jsx';
 import useFetch from '../hooks/useFetch.js';
 import useDebounce from '../hooks/useDebounce.js';
@@ -41,16 +42,22 @@ export default function EventsPage() {
 
   return (
     <>
-      <h1 className="mb-6 text-3xl font-bold text-slate-900 dark:text-slate-100">
-        Events
-      </h1>
+      <PageHeader
+        eyebrow="Discover"
+        title="Events"
+        description={
+          data
+            ? `${data.total} events from every club on campus.`
+            : 'Every event from every club on campus.'
+        }
+      />
       <EventFilters
         search={search}
         category={category}
         sort={sort}
         onChange={updateParam}
       />
-      {isLoading && <Spinner label="Loading events…" />}
+      {isLoading && <CardGridSkeleton label="Loading events…" />}
       {error && <ErrorState message={error} />}
       {data && !isLoading && (
         <>

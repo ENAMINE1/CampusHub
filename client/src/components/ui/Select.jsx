@@ -1,20 +1,26 @@
-// A labelled dropdown. Pass the <option> elements as children.
-export default function Select({ id, label, children, ...selectProps }) {
+// A labelled dropdown with a custom chevron. Pass the <option> elements as children.
+import { ChevronDown } from 'lucide-react';
+import { controlClass, labelClass } from './fieldStyles.js';
+
+export default function Select({ id, label, className = '', children, ...selectProps }) {
   return (
-    <div>
-      <label
-        htmlFor={id}
-        className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
-      >
+    <div className={className}>
+      <label htmlFor={id} className={labelClass}>
         {label}
       </label>
-      <select
-        id={id}
-        className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 capitalize"
-        {...selectProps}
-      >
-        {children}
-      </select>
+      <div className="relative">
+        <select
+          id={id}
+          className={`${controlClass} appearance-none pr-10 capitalize`}
+          {...selectProps}
+        >
+          {children}
+        </select>
+        <ChevronDown
+          className="pointer-events-none absolute top-1/2 right-3.5 size-4 -translate-y-1/2 text-ink-muted"
+          aria-hidden="true"
+        />
+      </div>
     </div>
   );
 }

@@ -1,7 +1,9 @@
 // Log-in form. The server answers wrong email and wrong password with the same message on purpose.
 import { useState } from 'react';
+import { Lock, Mail } from 'lucide-react';
 import Input from './ui/Input.jsx';
 import Button from './ui/Button.jsx';
+import ErrorState from './ui/ErrorState.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 
 export default function LoginForm() {
@@ -31,12 +33,14 @@ export default function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="max-w-md space-y-4">
+    <form onSubmit={handleSubmit} noValidate className="space-y-5">
       <Input
         id="login-email"
         name="email"
         label="Email"
         type="email"
+        icon={Mail}
+        placeholder="you@campus.edu"
         autoComplete="email"
         value={values.email}
         onChange={handleChange}
@@ -46,16 +50,13 @@ export default function LoginForm() {
         name="password"
         label="Password"
         type="password"
+        icon={Lock}
         autoComplete="current-password"
         value={values.password}
         onChange={handleChange}
       />
-      {error && (
-        <p role="alert" className="text-red-700 dark:text-red-300">
-          {error}
-        </p>
-      )}
-      <Button type="submit" disabled={isSaving}>
+      {error && <ErrorState title="Could not log in" message={error} />}
+      <Button type="submit" size="lg" isLoading={isSaving} className="w-full">
         {isSaving ? 'Logging in…' : 'Log in'}
       </Button>
     </form>

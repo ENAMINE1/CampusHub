@@ -1,11 +1,13 @@
 // Loading indicator. role="status" makes screen readers announce the label.
-export default function Spinner({ label = 'Loading…' }) {
+import { LoaderCircle } from 'lucide-react';
+
+export default function Spinner({ label = 'Loading…', className = '' }) {
   return (
     <div
       role="status"
-      className="flex items-center gap-3 py-6 text-slate-600 dark:text-slate-400"
+      className={`flex items-center justify-center gap-3 py-10 text-sm text-ink-muted ${className}`}
     >
-      <span className="size-5 animate-spin rounded-full border-2 border-slate-300 dark:border-slate-600 border-t-brand-700" />
+      <LoaderCircle className="size-5 animate-spin text-brand-500" aria-hidden="true" />
       {label}
     </div>
   );

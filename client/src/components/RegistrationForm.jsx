@@ -1,8 +1,10 @@
 // Controlled sign-up form: one state object for all fields, validated on blur and on submit,
 // then sent to the API. Server errors (like a taken email) are shown above the button.
 import { useState } from 'react';
+import { Lock, Mail, UserRound } from 'lucide-react';
 import Input from './ui/Input.jsx';
 import Button from './ui/Button.jsx';
+import ErrorState from './ui/ErrorState.jsx';
 import validateRegistration from '../utils/validateRegistration.js';
 import { useAuth } from '../context/AuthContext.jsx';
 
@@ -45,11 +47,12 @@ export default function RegistrationForm() {
   const visibleError = (field) => (touched[field] ? errors[field] : undefined);
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="max-w-md space-y-4">
+    <form onSubmit={handleSubmit} noValidate className="space-y-5">
       <Input
         id="register-name"
         name="name"
         label="Name"
+        icon={UserRound}
         autoComplete="name"
         value={values.name}
         onChange={handleChange}
@@ -61,6 +64,8 @@ export default function RegistrationForm() {
         name="email"
         label="Email"
         type="email"
+        icon={Mail}
+        placeholder="you@campus.edu"
         autoComplete="email"
         value={values.email}
         onChange={handleChange}
@@ -72,6 +77,8 @@ export default function RegistrationForm() {
         name="password"
         label="Password"
         type="password"
+        icon={Lock}
+        placeholder="At least 8 characters"
         autoComplete="new-password"
         value={values.password}
         onChange={handleChange}
@@ -79,11 +86,9 @@ export default function RegistrationForm() {
         error={visibleError('password')}
       />
       {serverError && (
-        <p role="alert" className="text-red-700 dark:text-red-300">
-          {serverError}
-        </p>
+        <ErrorState title="Could not create your account" message={serverError} />
       )}
-      <Button type="submit" disabled={isSaving}>
+      <Button type="submit" size="lg" isLoading={isSaving} className="w-full">
         {isSaving ? 'Creating account…' : 'Create account'}
       </Button>
     </form>

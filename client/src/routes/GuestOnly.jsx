@@ -8,7 +8,9 @@ export default function GuestOnly({ children }) {
   const { user, status } = useAuth();
   const location = useLocation();
 
-  if (status === 'checking') return <Spinner label="Checking your session…" />;
+  if (status === 'checking') {
+    return <Spinner label="Checking your session…" className="min-h-screen" />;
+  }
   if (user) return <Navigate to={location.state?.from ?? '/'} replace />;
   return children;
 }

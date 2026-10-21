@@ -1,27 +1,38 @@
-// A labelled input with an error message wired up for screen readers.
-export default function Input({ id, label, error, ...inputProps }) {
+// A labelled input with an optional leading icon and an error message wired up for screen readers.
+import FieldError from './FieldError.jsx';
+import { controlClass, labelClass } from './fieldStyles.js';
+
+export default function Input({
+  id,
+  label,
+  error,
+  icon: Icon,
+  className = '',
+  ...inputProps
+}) {
   const errorId = `${id}-error`;
 
   return (
-    <div>
-      <label
-        htmlFor={id}
-        className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
-      >
+    <div className={className}>
+      <label htmlFor={id} className={labelClass}>
         {label}
       </label>
-      <input
-        id={id}
-        aria-invalid={error ? true : undefined}
-        aria-describedby={error ? errorId : undefined}
-        className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 aria-invalid:border-red-600"
-        {...inputProps}
-      />
-      {error && (
-        <p id={errorId} className="mt-1 text-sm text-red-700 dark:text-red-300">
-          {error}
-        </p>
-      )}
+      <div className="relative">
+        {Icon && (
+          <Icon
+            className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-ink-muted"
+            aria-hidden="true"
+          />
+        )}
+        <input
+          id={id}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? errorId : undefined}
+          className={`${controlClass} ${Icon ? 'pl-10' : ''}`}
+          {...inputProps}
+        />
+      </div>
+      <FieldError id={errorId}>{error}</FieldError>
     </div>
   );
 }

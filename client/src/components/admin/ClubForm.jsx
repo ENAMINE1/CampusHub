@@ -5,6 +5,7 @@ import { apiFetch } from '../../api/client.js';
 import Button from '../ui/Button.jsx';
 import Input from '../ui/Input.jsx';
 import Textarea from '../ui/Textarea.jsx';
+import ErrorState from '../ui/ErrorState.jsx';
 
 const toForm = (club) => ({
   name: club?.name ?? '',
@@ -47,20 +48,16 @@ export default function ClubForm({ club, onSaved, onCancel }) {
 
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-4">
-      {message && (
-        <p role="alert" className="text-sm text-red-700 dark:text-red-300">
-          {message}
-        </p>
-      )}
+      {message && <ErrorState title="Could not save the club" message={message} />}
       <Input label="Name" required {...field('name')} />
       <Input label="Slug (used in the URL)" required {...field('slug')} />
       <Textarea label="Description" {...field('description')} />
       <Input label="Admin emails (comma-separated)" {...field('adminEmails')} />
-      <div className="flex justify-end gap-2">
+      <div className="flex justify-end gap-2 pt-2">
         <Button variant="secondary" onClick={onCancel}>
           Cancel
         </Button>
-        <Button type="submit" disabled={isSaving}>
+        <Button type="submit" isLoading={isSaving}>
           {isSaving ? 'Saving…' : 'Save club'}
         </Button>
       </div>
