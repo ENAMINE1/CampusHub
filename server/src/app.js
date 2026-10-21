@@ -8,6 +8,8 @@ import cookieParser from 'cookie-parser';
 import requestLogger from './middleware/requestLogger.js';
 import notFound from './middleware/notFound.js';
 import errorHandler from './middleware/errorHandler.js';
+import sanitize from './middleware/sanitize.js';
+import { apiLimiter } from './middleware/rateLimits.js';
 import eventsRouter from './routes/events.routes.js';
 import authRouter from './routes/auth.routes.js';
 import clubsRouter from './routes/clubs.routes.js';
@@ -24,6 +26,7 @@ app.use(helmet()); // safe default security headers
 app.use(cors({ origin: [config.clientUrl], credentials: true }));
 app.use(express.json({ limit: '100kb' })); // parse JSON bodies, reject huge ones
 app.use(cookieParser()); // read cookies into req.cookies
+app.use(sanitize); // drop $-operators from bodies before any code sees them
 
 // Uploaded posters. CORP 'cross-origin' lets a front end on another domain show them in <img>;
 // helmet's default (same-origin) would block that.
@@ -33,6 +36,9 @@ app.use(
     setHeaders: (res) => res.set('Cross-Origin-Resource-Policy', 'cross-origin'),
   }),
 );
+
+// Every API route shares one budget per IP. Posters and Socket.IO are outside /api.
+app.use('/api', apiLimiter);
 
 app.get('/api/v1/health', (req, res) => {
   res.json({ status: 'ok', uptime: process.uptime() });
