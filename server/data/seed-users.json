@@ -1,0 +1,18 @@
+[
+  { "name": "Ada Admin", "email": "admin@campushub.dev", "role": "admin" },
+  {
+    "name": "Kiran (Code Club)",
+    "email": "code.lead@campushub.dev",
+    "role": "clubAdmin"
+  },
+  {
+    "name": "Meera (Cultural Society)",
+    "email": "culture.lead@campushub.dev",
+    "role": "clubAdmin"
+  },
+  { "name": "Aarav Sharma", "email": "aarav@campushub.dev", "role": "student" },
+  { "name": "Diya Patel", "email": "diya@campushub.dev", "role": "student" },
+  { "name": "Ishaan Rao", "email": "ishaan@campushub.dev", "role": "student" },
+  { "name": "Zara Khan", "email": "zara@campushub.dev", "role": "student" },
+  { "name": "Rohan Das", "email": "rohan@campushub.dev", "role": "student" }
+]
