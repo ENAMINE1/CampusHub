@@ -35,7 +35,7 @@ Review the change, not the person: ask questions, suggest, and say what is good 
 
 - [ ] Names say what things are; each file starts with a short "what this is for" comment.
 - [ ] Comments explain _why_, not _what_.
-- [ ] Components stay under about 80 lines, other modules under about 120.
+- [ ] Components and other modules stay under about 150 lines.
 - [ ] No dead code, commented-out code or stray `console.log`.
 
 ## 6. User experience (UI changes)

@@ -9,7 +9,7 @@ const action = buttonStyles({ variant: 'ghost', size: 'sm' });
 
 export default function ClubEventRow({ event, onDelete }) {
   return (
-    <li className="flex flex-wrap items-center gap-4 p-4 sm:flex-nowrap">
+    <li className="flex flex-wrap items-center gap-4 p-4 transition-colors hover:bg-surface-muted/50 sm:flex-nowrap">
       <DateTile iso={event.startsAt} />
       <div className="min-w-0 flex-1">
         <Link

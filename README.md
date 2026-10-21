@@ -99,8 +99,13 @@ output directory is `dist`.
   Select, Textarea, Modal, PageHeader, SectionHeader, skeletons, empty and error states).
   `buttonStyles.js` gives links the same look as buttons.
 - **Icons** come from one library, `lucide-react`.
-- **Motion** is short and subtle (entrance fade-up, hover lift) and switched off entirely when the
-  operating system asks for reduced motion.
+- **Feedback and motion:** toasts confirm actions (register, cancel, save, delete, copy link);
+  pages fade in, cards lift and their covers zoom on hover, the favorite heart pops, live seat
+  changes flash, lists keep old results dimmed while new ones load, and skeletons shimmer on first
+  load. Everything is switched off when the operating system asks for reduced motion.
+- **Small helpers:** "/" focuses the event search (Esc clears it), show / hide password with a
+  Caps Lock warning, "Tomorrow" / "In 3 days" labels, copy link and add-to-calendar (.ics) on
+  every event, a sliding Upcoming / Past switch, and a back-to-top button on long pages.
 
 ## API
 

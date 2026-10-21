@@ -10,13 +10,17 @@ import Modal from '../../components/ui/Modal.jsx';
 import Spinner from '../../components/ui/Spinner.jsx';
 import ErrorState from '../../components/ui/ErrorState.jsx';
 import PageHeader from '../../components/ui/PageHeader.jsx';
+import { useToast } from '../../context/ToastContext.jsx';
 
 export default function AdminPage() {
   const { data: clubs, isLoading, error, reload } = useFetch('/admin/clubs');
   // null: closed; 'new': creating; a club object: editing that club.
   const [editing, setEditing] = useState(null);
 
+  const toast = useToast();
+
   function handleSaved() {
+    toast.success(editing === 'new' ? 'Club created.' : 'Club updated.');
     setEditing(null);
     reload();
   }

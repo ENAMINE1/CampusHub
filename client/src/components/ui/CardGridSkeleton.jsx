@@ -1,5 +1,6 @@
-// Grey placeholder cards shown while a list loads. They take the same space as the real cards,
-// so nothing jumps when the data arrives. Screen readers hear the label instead.
+// Placeholder cards shown while a list loads. They take the same space as the real cards, so
+// nothing jumps when the data arrives, and a soft shimmer shows that loading is in progress.
+// Screen readers hear the label instead.
 export default function CardGridSkeleton({ count = 6, label = 'Loading…' }) {
   return (
     <div role="status" aria-label={label}>
@@ -9,12 +10,13 @@ export default function CardGridSkeleton({ count = 6, label = 'Loading…' }) {
             key={i}
             className="overflow-hidden rounded-2xl border border-line bg-surface shadow-card"
           >
-            <div className="h-28 animate-pulse bg-surface-muted" />
+            <div className="skeleton h-32" />
             <div className="space-y-3 p-5">
-              <div className="h-4 w-1/3 animate-pulse rounded bg-surface-muted" />
-              <div className="h-5 w-3/4 animate-pulse rounded bg-surface-muted" />
-              <div className="h-4 w-full animate-pulse rounded bg-surface-muted" />
-              <div className="h-4 w-2/3 animate-pulse rounded bg-surface-muted" />
+              <div className="skeleton h-4 w-1/3 rounded-full" />
+              <div className="skeleton h-5 w-3/4 rounded-md" />
+              <div className="skeleton h-4 w-full rounded-md" />
+              <div className="skeleton h-4 w-2/3 rounded-md" />
+              <div className="skeleton mt-6 h-1.5 w-full rounded-full" />
             </div>
           </li>
         ))}

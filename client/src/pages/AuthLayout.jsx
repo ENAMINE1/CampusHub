@@ -20,6 +20,15 @@ export default function AuthLayout() {
           aria-hidden="true"
           className="absolute inset-0 bg-[radial-gradient(60rem_40rem_at_0%_0%,oklch(0.62_0.2_290/.55),transparent_60%),radial-gradient(40rem_30rem_at_100%_100%,oklch(0.55_0.2_250/.5),transparent_60%)]"
         />
+        {/* Two soft lights drifting slowly: movement that is felt more than seen. */}
+        <div
+          aria-hidden="true"
+          className="absolute -top-20 -left-20 size-96 animate-float rounded-full bg-fuchsia-400/20 blur-3xl [animation-duration:14s]"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute -right-24 -bottom-24 size-[28rem] animate-float rounded-full bg-sky-400/20 blur-3xl [animation-delay:-7s] [animation-duration:18s]"
+        />
         <div
           aria-hidden="true"
           className="absolute inset-0 bg-[linear-gradient(to_right,white_1px,transparent_1px),linear-gradient(to_bottom,white_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_at_center,black,transparent_75%)] bg-[size:48px_48px] opacity-[0.07]"
@@ -33,8 +42,12 @@ export default function AuthLayout() {
             Everything happening on campus, in one place.
           </p>
           <ul className="mt-10 space-y-4">
-            {FEATURES.map(({ icon: Icon, text }) => (
-              <li key={text} className="flex items-start gap-3 text-brand-50">
+            {FEATURES.map(({ icon: Icon, text }, i) => (
+              <li
+                key={text}
+                className="flex animate-rise items-start gap-3 text-brand-50"
+                style={{ animationDelay: `${200 + i * 120}ms` }}
+              >
                 <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-white/10 ring-1 ring-white/20">
                   <Icon className="size-4" aria-hidden="true" />
                 </span>

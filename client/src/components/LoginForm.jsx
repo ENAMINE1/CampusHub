@@ -1,16 +1,19 @@
 // Log-in form. The server answers wrong email and wrong password with the same message on purpose.
 import { useState } from 'react';
-import { Lock, Mail } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import Input from './ui/Input.jsx';
+import PasswordInput from './ui/PasswordInput.jsx';
 import Button from './ui/Button.jsx';
 import ErrorState from './ui/ErrorState.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
+import { useToast } from '../context/ToastContext.jsx';
 
 export default function LoginForm() {
   const [values, setValues] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const { login } = useAuth();
+  const toast = useToast();
 
   function handleChange(e) {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -25,7 +28,8 @@ export default function LoginForm() {
     setIsSaving(true);
     setError('');
     try {
-      await login(values.email.trim(), values.password);
+      const user = await login(values.email.trim(), values.password);
+      toast.success(`Welcome back${user?.name ? `, ${user.name.split(' ')[0]}` : ''}!`);
     } catch (err) {
       setError(err.message);
       setIsSaving(false);
@@ -45,12 +49,10 @@ export default function LoginForm() {
         value={values.email}
         onChange={handleChange}
       />
-      <Input
+      <PasswordInput
         id="login-password"
         name="password"
         label="Password"
-        type="password"
-        icon={Lock}
         autoComplete="current-password"
         value={values.password}
         onChange={handleChange}

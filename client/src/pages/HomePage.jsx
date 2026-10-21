@@ -6,6 +6,7 @@ import useFetch from '../hooks/useFetch.js';
 import CardGridSkeleton from '../components/ui/CardGridSkeleton.jsx';
 import ErrorState from '../components/ui/ErrorState.jsx';
 import SectionHeader from '../components/ui/SectionHeader.jsx';
+import Reveal from '../components/ui/Reveal.jsx';
 
 export default function HomePage() {
   // Ask the server for exactly what we show: the next three upcoming events.
@@ -14,7 +15,7 @@ export default function HomePage() {
   return (
     <>
       <HomeHero />
-      <section aria-labelledby="upcoming" className="mb-16">
+      <Reveal as="section" aria-labelledby="upcoming" className="mb-16">
         <SectionHeader
           id="upcoming"
           title="Coming up next"
@@ -30,8 +31,10 @@ export default function HomePage() {
             emptyMessage="No upcoming events yet."
           />
         )}
-      </section>
-      <FeaturedClubs />
+      </Reveal>
+      <Reveal>
+        <FeaturedClubs />
+      </Reveal>
     </>
   );
 }

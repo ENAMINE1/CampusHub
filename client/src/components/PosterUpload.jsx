@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { ImageUp } from 'lucide-react';
 import { apiFetch, assetUrl } from '../api/client.js';
+import { useToast } from '../context/ToastContext.jsx';
 
 const TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_BYTES = 2 * 1024 * 1024;
@@ -11,6 +12,7 @@ export default function PosterUpload({ eventId, posterUrl }) {
   const [url, setUrl] = useState(posterUrl);
   const [status, setStatus] = useState('');
   const [error, setError] = useState('');
+  const toast = useToast();
 
   async function handleChange(e) {
     const file = e.target.files[0];
@@ -29,6 +31,7 @@ export default function PosterUpload({ eventId, posterUrl }) {
       });
       setUrl(event.posterUrl);
       setStatus('Poster updated.');
+      toast.success('Poster updated.');
     } catch (err) {
       setError(err.message);
       setStatus('');

@@ -5,7 +5,7 @@ import Card from './ui/Card.jsx';
 // headingAs: h2 on the clubs page, h3 inside a home page section, so headings never skip a level.
 export default function ClubCard({ club, headingAs: Heading = 'h2' }) {
   return (
-    <Card className="h-full">
+    <Card interactive className="group h-full">
       <div className="mb-4 flex items-center gap-3">
         {club.logoUrl ? (
           <img
@@ -19,7 +19,7 @@ export default function ClubCard({ club, headingAs: Heading = 'h2' }) {
         ) : (
           <span
             aria-hidden="true"
-            className="grid size-12 place-items-center rounded-xl bg-gradient-to-br from-brand-100 to-brand-50 font-display text-lg font-bold text-brand-700 ring-1 ring-brand-100 ring-inset dark:from-brand-500/25 dark:to-brand-500/10 dark:text-brand-300 dark:ring-brand-500/20"
+            className="grid size-12 place-items-center rounded-xl transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6 bg-gradient-to-br from-brand-100 to-brand-50 font-display text-lg font-bold text-brand-700 ring-1 ring-brand-100 ring-inset dark:from-brand-500/25 dark:to-brand-500/10 dark:text-brand-300 dark:ring-brand-500/20"
           >
             {club.name.charAt(0)}
           </span>

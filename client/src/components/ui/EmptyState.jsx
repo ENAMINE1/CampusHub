@@ -3,8 +3,8 @@ import { Inbox } from 'lucide-react';
 
 export default function EmptyState({ message, title, icon: Icon = Inbox, action }) {
   return (
-    <div className="flex flex-col items-center rounded-2xl border border-dashed border-line bg-surface/60 px-6 py-12 text-center">
-      <span className="mb-4 grid size-12 place-items-center rounded-2xl bg-surface-muted text-ink-muted">
+    <div className="flex animate-fade flex-col items-center rounded-2xl border border-dashed border-line bg-surface/60 px-6 py-12 text-center">
+      <span className="mb-4 grid size-12 animate-float place-items-center rounded-2xl bg-surface-muted text-ink-muted">
         <Icon className="size-6" aria-hidden="true" />
       </span>
       {title && <p className="font-semibold text-ink">{title}</p>}

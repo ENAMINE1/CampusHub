@@ -10,18 +10,21 @@ import Modal from './ui/Modal.jsx';
 import Spinner from './ui/Spinner.jsx';
 import ErrorState from './ui/ErrorState.jsx';
 import EmptyState from './ui/EmptyState.jsx';
+import { useToast } from '../context/ToastContext.jsx';
 
 export default function ClubEventsTable({ club }) {
   // 50 is the API's maximum page size, plenty for one club's dashboard.
   const { data, isLoading, error, reload } = useFetch(`/events?club=${club.id}&limit=50`);
   const [toDelete, setToDelete] = useState(null);
   const [deleteError, setDeleteError] = useState('');
+  const toast = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
 
   async function confirmDelete() {
     setIsDeleting(true);
     try {
       await apiFetch(`/events/${toDelete.id}`, { method: 'DELETE' });
+      toast.success(`${toDelete.title} was deleted.`);
       reload();
     } catch (err) {
       setDeleteError(err.message);

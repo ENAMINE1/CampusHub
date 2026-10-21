@@ -10,6 +10,7 @@ import Badge from '../components/ui/Badge.jsx';
 import EventCover from '../components/EventCover.jsx';
 import EventFacts from '../components/EventFacts.jsx';
 import ReservePanel from '../components/ReservePanel.jsx';
+import WhenChip from '../components/WhenChip.jsx';
 
 export default function EventDetailsPage() {
   const { id } = useParams();
@@ -24,7 +25,7 @@ export default function EventDetailsPage() {
   if (!event) return <Spinner label="Loading event…" />;
 
   return (
-    <div className="animate-rise">
+    <div>
       <Link
         to="/events"
         className="group mb-6 inline-flex items-center gap-1.5 text-sm font-semibold text-ink-muted hover:text-ink"
@@ -37,11 +38,14 @@ export default function EventDetailsPage() {
       </Link>
       <div className="grid gap-8 lg:grid-cols-[1fr_22rem]">
         <article className="min-w-0">
-          <EventCover
-            event={event}
-            eager
-            className="mb-8 aspect-[21/9] rounded-3xl border border-line"
-          />
+          <div className="relative mb-8 animate-rise overflow-hidden rounded-3xl border border-line">
+            <EventCover event={event} eager className="aspect-[21/9]" />
+            <WhenChip
+              startsAt={event.startsAt}
+              endsAt={event.endsAt}
+              className="absolute bottom-4 left-4 text-sm"
+            />
+          </div>
           <div className="mb-3 flex flex-wrap items-center gap-2">
             <Badge>{event.category}</Badge>
             <span className="text-sm font-medium text-ink-muted">{event.club.name}</span>

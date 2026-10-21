@@ -1,12 +1,14 @@
 // Controlled sign-up form: one state object for all fields, validated on blur and on submit,
 // then sent to the API. Server errors (like a taken email) are shown above the button.
 import { useState } from 'react';
-import { Lock, Mail, UserRound } from 'lucide-react';
+import { Mail, UserRound } from 'lucide-react';
 import Input from './ui/Input.jsx';
+import PasswordInput from './ui/PasswordInput.jsx';
 import Button from './ui/Button.jsx';
 import ErrorState from './ui/ErrorState.jsx';
 import validateRegistration from '../utils/validateRegistration.js';
 import { useAuth } from '../context/AuthContext.jsx';
+import { useToast } from '../context/ToastContext.jsx';
 
 const emptyForm = { name: '', email: '', password: '' };
 
@@ -16,6 +18,7 @@ export default function RegistrationForm() {
   const [serverError, setServerError] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const { register } = useAuth();
+  const toast = useToast();
 
   // Errors are derived from the values, so they can never disagree with what is typed.
   const errors = validateRegistration(values);
@@ -37,6 +40,7 @@ export default function RegistrationForm() {
     try {
       // On success AuthContext now has a user, and the page moves on.
       await register(values.name.trim(), values.email.trim(), values.password);
+      toast.success('Account created. Welcome to CampusHub!');
     } catch (err) {
       setServerError(err.message);
       setIsSaving(false);
@@ -72,12 +76,10 @@ export default function RegistrationForm() {
         onBlur={handleBlur}
         error={visibleError('email')}
       />
-      <Input
+      <PasswordInput
         id="register-password"
         name="password"
         label="Password"
-        type="password"
-        icon={Lock}
         placeholder="At least 8 characters"
         autoComplete="new-password"
         value={values.password}

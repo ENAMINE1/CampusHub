@@ -12,7 +12,7 @@
 ## Code style
 
 - JavaScript only, ES modules (`"type": "module"`). No TypeScript.
-- About 150 changed lines per video; components under 80 lines, other modules under 120.
+- About 150 changed lines per video; components and other modules under 150 lines.
 - Plain code: no barrel `index.js`, no HOCs, factories, base classes or DI.
 - Every file starts with a one-to-two line comment saying what it is for. Comments explain why.
 - Use a concept only from the video that teaches it onward (no Context before V41, no Router before V39, no database before V59).

@@ -8,10 +8,12 @@ import Spinner from '../../components/ui/Spinner.jsx';
 import PageHeader from '../../components/ui/PageHeader.jsx';
 import ErrorState from '../../components/ui/ErrorState.jsx';
 import { emptyEventForm, toFormValues } from '../../features/events/eventFormValues.js';
+import { useToast } from '../../context/ToastContext.jsx';
 
 export default function EventFormPage() {
   const { id } = useParams(); // undefined when creating
   const navigate = useNavigate();
+  const toast = useToast();
   const clubs = useFetch('/me/clubs');
   // Hooks cannot be skipped, so when creating we still call useFetch, for a tiny list we ignore.
   const existing = useFetch(id ? `/events/${id}` : '/events?limit=1');
@@ -26,6 +28,9 @@ export default function EventFormPage() {
       method: id ? 'PATCH' : 'POST',
       body,
     });
+    toast.success(
+      id ? 'Changes saved.' : `${body.title} is live. Students can register now.`,
+    );
     navigate('/dashboard');
   }
 

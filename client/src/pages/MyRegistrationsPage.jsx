@@ -4,16 +4,12 @@ import { Link } from 'react-router';
 import { Ticket } from 'lucide-react';
 import RegistrationRow from '../components/RegistrationRow.jsx';
 import PageHeader from '../components/ui/PageHeader.jsx';
+import SegmentedControl from '../components/ui/SegmentedControl.jsx';
 import EmptyState from '../components/ui/EmptyState.jsx';
 import ErrorState from '../components/ui/ErrorState.jsx';
 import Spinner from '../components/ui/Spinner.jsx';
 import buttonStyles from '../components/ui/buttonStyles.js';
 import { useRegistrations } from '../context/RegistrationsContext.jsx';
-
-const tabClass = (isActive) =>
-  `rounded-lg px-4 py-1.5 text-sm font-semibold capitalize transition ${
-    isActive ? 'bg-surface text-ink shadow-card' : 'text-ink-muted hover:text-ink'
-  }`;
 
 export default function MyRegistrationsPage() {
   const { registrations, isLoading, error } = useRegistrations();
@@ -21,9 +17,9 @@ export default function MyRegistrationsPage() {
 
   const now = new Date();
   const active = registrations.filter((r) => r.status === 'registered');
-  const shown = active.filter((r) =>
-    tab === 'upcoming' ? new Date(r.startsAt) >= now : new Date(r.startsAt) < now,
-  );
+  const upcoming = active.filter((r) => new Date(r.startsAt) >= now);
+  const past = active.filter((r) => new Date(r.startsAt) < now);
+  const shown = tab === 'upcoming' ? upcoming : past;
 
   return (
     <>
@@ -32,23 +28,15 @@ export default function MyRegistrationsPage() {
         title="My registrations"
         description="Every event you have a seat for."
       />
-      <div
-        className="mb-6 inline-flex gap-1 rounded-xl border border-line bg-surface-muted p-1"
-        role="group"
-        aria-label="Which registrations"
-      >
-        {['upcoming', 'past'].map((name) => (
-          <button
-            key={name}
-            type="button"
-            aria-pressed={tab === name}
-            onClick={() => setTab(name)}
-            className={tabClass(tab === name)}
-          >
-            {name}
-          </button>
-        ))}
-      </div>
+      <SegmentedControl
+        label="Which registrations"
+        value={tab}
+        onChange={setTab}
+        options={[
+          { value: 'upcoming', label: 'Upcoming', count: upcoming.length },
+          { value: 'past', label: 'Past', count: past.length },
+        ]}
+      />
       {isLoading && <Spinner label="Loading your registrations…" />}
       {error && <ErrorState message={error} />}
       {!isLoading && !error && shown.length === 0 && (
@@ -62,9 +50,13 @@ export default function MyRegistrationsPage() {
           }
         />
       )}
-      <ul className="space-y-3">
-        {shown.map((r) => (
-          <li key={r.eventId} className="animate-rise">
+      <ul key={tab} className="space-y-3">
+        {shown.map((r, i) => (
+          <li
+            key={r.eventId}
+            className="animate-rise"
+            style={{ animationDelay: `${Math.min(i, 8) * 40}ms` }}
+          >
             <RegistrationRow registration={r} />
           </li>
         ))}

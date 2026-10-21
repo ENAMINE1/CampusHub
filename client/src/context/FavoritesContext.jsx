@@ -4,6 +4,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import useLocalStorage from '../hooks/useLocalStorage.js';
 import { useAuth } from './AuthContext.jsx';
+import { useToast } from './ToastContext.jsx';
 import { apiFetch } from '../api/client.js';
 
 const FavoritesContext = createContext(null);
@@ -13,6 +14,7 @@ const toggled = (ids, id) =>
 
 export function FavoritesProvider({ children }) {
   const { user } = useAuth();
+  const toast = useToast();
   const [guestFavorites, setGuestFavorites] = useLocalStorage('campushub:favorites', []);
   // Which user the server list belongs to, so one account never shows another's favorites.
   const [server, setServer] = useState({ userId: null, ids: [] });
@@ -43,7 +45,10 @@ export function FavoritesProvider({ children }) {
     const wasFavorite = favorites.includes(id);
     setServer((s) => ({ ...s, ids: toggled(s.ids, id) }));
     apiFetch(`/me/favorites/${id}`, { method: wasFavorite ? 'DELETE' : 'PUT' }).catch(
-      () => setServer((s) => ({ ...s, ids: toggled(s.ids, id) })),
+      () => {
+        setServer((s) => ({ ...s, ids: toggled(s.ids, id) }));
+        toast.error('Could not update your favorites. Try again.');
+      },
     );
   }
 

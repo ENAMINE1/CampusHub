@@ -10,8 +10,8 @@ test('student registers for an event and sees it in My registrations', async ({
   page,
 }) => {
   await page.goto('/login');
-  await page.getByLabel('Email').fill(STUDENT.email);
-  await page.getByLabel('Password').fill(STUDENT.password);
+  await page.getByLabel('Email', { exact: true }).fill(STUDENT.email);
+  await page.getByLabel('Password', { exact: true }).fill(STUDENT.password);
   await page.getByRole('button', { name: /log in/i }).click();
   await expect(page.getByRole('button', { name: /log out/i })).toBeVisible();
 
@@ -22,7 +22,8 @@ test('student registers for an event and sees it in My registrations', async ({
 
   await page.getByRole('button', { name: /register for this event/i }).click();
   await page.getByRole('button', { name: /yes, register me/i }).click();
-  await expect(page.getByRole('status')).toContainText(`You are registered for ${EVENT}`);
+  // By text, not role: the confirmation toast is a second status region on the page.
+  await expect(page.getByText(`You are registered for ${EVENT}`)).toBeVisible();
 
   await page.getByRole('link', { name: /my registrations/i }).click();
   await expect(page.getByRole('link', { name: EVENT })).toBeVisible();
