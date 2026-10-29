@@ -33,6 +33,15 @@ describe('GET /api/v1/health', () => {
     expect(res.body.status).toBe('ok');
     expect(res.body.db).toBe('up');
   });
+
+  it('gives every response a request id, reusing a safe one from the caller', async () => {
+    const generated = await api.get('/api/v1/health');
+    expect(generated.headers['x-request-id']).toMatch(/^[\w-]{8,}$/);
+    const reused = await api.get('/api/v1/health').set('X-Request-Id', 'trace-123');
+    expect(reused.headers['x-request-id']).toBe('trace-123');
+    const unsafe = await api.get('/api/v1/health').set('X-Request-Id', 'a b"c');
+    expect(unsafe.headers['x-request-id']).not.toBe('a b"c');
+  });
 });
 
 describe('GET /api/v1/events', () => {
