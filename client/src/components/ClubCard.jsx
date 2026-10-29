@@ -1,11 +1,12 @@
 // One club: a monogram (or its logo), its name and description.
+import { Link } from 'react-router';
 import { assetUrl } from '../api/client.js';
 import Card from './ui/Card.jsx';
 
 // headingAs: h2 on the clubs page, h3 inside a home page section, so headings never skip a level.
 export default function ClubCard({ club, headingAs: Heading = 'h2' }) {
   return (
-    <Card interactive className="group h-full">
+    <Card interactive className="group relative h-full">
       <div className="mb-4 flex items-center gap-3">
         {club.logoUrl ? (
           <img
@@ -24,7 +25,15 @@ export default function ClubCard({ club, headingAs: Heading = 'h2' }) {
             {club.name.charAt(0)}
           </span>
         )}
-        <Heading className="text-lg font-semibold">{club.name}</Heading>
+        <Heading className="text-lg font-semibold">
+          {/* The link stretches over the whole card, like the title link on EventCard. */}
+          <Link
+            to={`/clubs/${club.slug}`}
+            className="after:absolute after:inset-0 focus:outline-none"
+          >
+            {club.name}
+          </Link>
+        </Heading>
       </div>
       <p className="text-sm leading-relaxed text-ink-muted">
         {club.description || 'No description yet.'}

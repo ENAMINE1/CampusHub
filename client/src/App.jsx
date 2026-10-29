@@ -9,6 +9,7 @@ import HomePage from './pages/HomePage.jsx';
 import EventsPage from './pages/EventsPage.jsx';
 import EventDetailsPage from './pages/EventDetailsPage.jsx';
 import ClubsPage from './pages/ClubsPage.jsx';
+import ClubDetailPage from './pages/ClubDetailPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
@@ -16,6 +17,7 @@ import GuestOnly from './routes/GuestOnly.jsx';
 import ProtectedRoute from './routes/ProtectedRoute.jsx';
 
 // Loaded on demand: most visitors never open these pages, so their code stays out of the first download.
+const FavoritesPage = lazy(() => import('./pages/FavoritesPage.jsx'));
 const MyRegistrationsPage = lazy(() => import('./pages/MyRegistrationsPage.jsx'));
 const DashboardPage = lazy(() => import('./pages/dashboard/DashboardPage.jsx'));
 const EventFormPage = lazy(() => import('./pages/dashboard/EventFormPage.jsx'));
@@ -49,10 +51,12 @@ export default function App() {
         <Route path="events" element={<EventsPage />} />
         <Route path="events/:id" element={<EventDetailsPage />} />
         <Route path="clubs" element={<ClubsPage />} />
+        <Route path="clubs/:slug" element={<ClubDetailPage />} />
         <Route
           path="me/registrations"
           element={only(['student'], <MyRegistrationsPage />)}
         />
+        <Route path="me/favorites" element={only(['student'], <FavoritesPage />)} />
         <Route path="dashboard" element={only(STAFF, <DashboardPage />)} />
         <Route path="dashboard/events/new" element={only(STAFF, <EventFormPage />)} />
         <Route

@@ -6,7 +6,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
-import requestLogger from './middleware/requestLogger.js';
+import requestLogger, { requestId } from './middleware/requestLogger.js';
 import notFound from './middleware/notFound.js';
 import errorHandler from './middleware/errorHandler.js';
 import sanitize from './middleware/sanitize.js';
@@ -20,6 +20,7 @@ import adminRouter from './routes/admin.routes.js';
 const app = express();
 
 // Order matters: each request flows through these top to bottom.
+app.use(requestId);
 app.use(requestLogger);
 app.use(helmet()); // safe default security headers
 // Only our own front end may call the API from a browser, and it may send cookies.

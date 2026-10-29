@@ -2,6 +2,7 @@
 import { NavLink } from 'react-router';
 import {
   CalendarDays,
+  Heart,
   House,
   LayoutDashboard,
   Shield,
@@ -20,6 +21,7 @@ const LINKS = [
     icon: Ticket,
     roles: ['student'],
   },
+  { to: '/me/favorites', label: 'Favorites', icon: Heart, roles: ['student'] },
   {
     to: '/dashboard',
     label: 'Dashboard',
