@@ -31,6 +31,7 @@ describe('GET /api/v1/health', () => {
     const res = await api.get('/api/v1/health');
     expect(res.status).toBe(200);
     expect(res.body.status).toBe('ok');
+    expect(res.body.db).toBe('up');
   });
 });
 
