@@ -5,6 +5,7 @@ import config from './config/index.js';
 import helmet from 'helmet';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import mongoose from 'mongoose';
 import requestLogger from './middleware/requestLogger.js';
 import notFound from './middleware/notFound.js';
 import errorHandler from './middleware/errorHandler.js';
@@ -40,8 +41,14 @@ app.use(
 // Every API route shares one budget per IP. Posters and Socket.IO are outside /api.
 app.use('/api', apiLimiter);
 
+// readyState 1 means connected. Hosts and uptime monitors use this to tell "up" from "up but broken".
 app.get('/api/v1/health', (req, res) => {
-  res.json({ status: 'ok', uptime: process.uptime() });
+  const db = mongoose.connection.readyState === 1 ? 'up' : 'down';
+  res.status(db === 'up' ? 200 : 503).json({
+    status: db === 'up' ? 'ok' : 'degraded',
+    uptime: process.uptime(),
+    db,
+  });
 });
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/events', eventsRouter);

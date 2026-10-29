@@ -12,7 +12,10 @@ const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 const cookieOptions = {
   httpOnly: true,
   secure: config.isProduction, // HTTPS only in production
-  sameSite: 'lax',
+  // The client (Vercel) and the API (Render) are different sites in production, so the browser only
+  // sends this cookie on cross-site requests when SameSite=None (which requires Secure).
+  // On localhost both run on one site, where 'lax' is the safer default.
+  sameSite: config.isProduction ? 'none' : 'lax',
   path: '/api/v1/auth',
 };
 
